@@ -91,19 +91,6 @@ public class BackgroundPreference extends Preference {
 		}
 	}
 
-	@Override
-	protected void onClick() {
-		final Intent call = new Intent(getContext(), Chooser.class)
-			.putExtra(VALUE_KEY, myProfile.WallpaperOption.getValue());
-
-		final ZLColor color = myProfile.BackgroundOption.getValue();
-		if (color != null) {
-			call.putExtra(COLOR_KEY, ZLAndroidColorUtil.rgb(color));
-		}
-
-		((Activity)getContext()).startActivityForResult(call, myRequestCode);
-	}
-
 	public void update(Intent data) {
 		final String value = data.getStringExtra(VALUE_KEY);
 		if (value != null) {

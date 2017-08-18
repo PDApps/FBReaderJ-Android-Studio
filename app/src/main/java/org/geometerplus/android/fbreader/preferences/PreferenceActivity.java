@@ -50,7 +50,6 @@ import org.geometerplus.android.fbreader.FBReader;
 import org.geometerplus.android.fbreader.dict.DictionaryUtil;
 import org.geometerplus.android.fbreader.libraryService.BookCollectionShadow;
 import org.geometerplus.android.fbreader.network.auth.ActivityNetworkContext;
-import org.geometerplus.android.fbreader.preferences.fileChooser.FileChooserCollection;
 import org.geometerplus.android.fbreader.preferences.background.BackgroundPreference;
 import org.geometerplus.android.fbreader.sync.SyncOperations;
 
@@ -59,7 +58,6 @@ import org.geometerplus.android.util.DeviceType;
 
 public class PreferenceActivity extends ZLPreferenceActivity {
 	private final ActivityNetworkContext myNetworkContext = new ActivityNetworkContext(this);
-	private final FileChooserCollection myChooserCollection = new FileChooserCollection(this, 2000);
 	private static final int BACKGROUND_REQUEST_CODE = 3000;
 	private BackgroundPreference myBackgroundPreference;
 
@@ -89,8 +87,6 @@ public class PreferenceActivity extends ZLPreferenceActivity {
 			}
 			return;
 		}
-
-		myChooserCollection.update(requestCode, data);
 	}
 
 	@Override
@@ -134,20 +130,7 @@ public class PreferenceActivity extends ZLPreferenceActivity {
 				});
 			}
 		};
-		directoriesScreen.addPreference(myChooserCollection.createPreference(
-			directoriesScreen.Resource, "bookPath", Paths.BookPathOption, libraryUpdater
-		));
-		directoriesScreen.addPreference(myChooserCollection.createPreference(
-			directoriesScreen.Resource, "downloadDir", Paths.DownloadsDirectoryOption, libraryUpdater
-		));
 		final PreferenceSet fontReloader = new PreferenceSet.Reloader();
-		directoriesScreen.addPreference(myChooserCollection.createPreference(
-			directoriesScreen.Resource, "fontPath", Paths.FontPathOption, fontReloader
-		));
-		directoriesScreen.addPreference(myChooserCollection.createPreference(
-			directoriesScreen.Resource, "tempDir", Paths.TempDirectoryOption(this), null
-		));
-
 		final Screen syncScreen = createPreferenceScreen("sync");
 		final PreferenceSet syncPreferences = new PreferenceSet.Enabler() {
 			@Override
