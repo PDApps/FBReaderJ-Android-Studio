@@ -22,11 +22,11 @@ package org.geometerplus.android.fbreader.dict;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.os.Parcelable;
 import android.view.View;
 
-import com.github.johnpersano.supertoasts.SuperActivityToast;
-import com.github.johnpersano.supertoasts.SuperToast;
-import com.github.johnpersano.supertoasts.util.OnDismissWrapper;
+import com.github.johnpersano.supertoasts.library.SuperActivityToast;
+import com.github.johnpersano.supertoasts.library.SuperToast;
 
 import org.geometerplus.zlibrary.core.resources.ZLResource;
 
@@ -60,12 +60,12 @@ abstract class InternalUtil {
 			return;
 		}
 
-		toast.setOnDismissWrapper(new OnDismissWrapper("dict", new SuperToast.OnDismissListener() {
+		toast.setOnDismissListener("dict", new SuperToast.OnDismissListener() {
 			@Override
-			public void onDismiss(View view) {
+			public void onDismiss(View view, Parcelable token) {
 				fbreader.hideDictionarySelection();
 			}
-		}));
+		});
 		fbreader.showToast(toast);
 	}
 }

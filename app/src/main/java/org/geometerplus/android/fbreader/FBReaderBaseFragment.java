@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.WindowManager;
 
-import com.github.johnpersano.supertoasts.SuperActivityToast;
+import com.github.johnpersano.supertoasts.library.SuperActivityToast;
 
 import org.geometerplus.android.fbreader.dict.DictionaryUtil;
 import org.geometerplus.android.fbreader.util.FBReaderAdapter;
@@ -104,10 +104,6 @@ public abstract class FBReaderBaseFragment extends Fragment implements FBReaderA
         final int dpFontSize = fontSize * 160 * percent / dpi / 100;
         toast.setTextSize(dpFontSize);
         toast.setButtonTextSize(dpFontSize * 7 / 8);
-
-        final String fontFamily =
-                new ZLStringOption("Style", "Base:fontFamily", "sans-serif").getValue();
-        toast.setTypeface(AndroidFontUtil.systemTypeface(fontFamily, false, false));
 
         getActivity().runOnUiThread(new Runnable() {
             public void run() {

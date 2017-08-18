@@ -1,5 +1,4 @@
-include ':app', ':SuperToasts'
+include ':app'
 include ':ambilWarna'
 include ':code'
 include ':dragsortlistview'
-include ':superToasts'

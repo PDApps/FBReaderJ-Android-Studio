@@ -1,6 +1,6 @@
 package org.geometerplus.android.fbreader.util;
 
-import com.github.johnpersano.supertoasts.SuperActivityToast;
+import com.github.johnpersano.supertoasts.library.SuperActivityToast;
 
 import org.geometerplus.android.fbreader.httpd.DataService;
 import org.geometerplus.fbreader.book.Book;

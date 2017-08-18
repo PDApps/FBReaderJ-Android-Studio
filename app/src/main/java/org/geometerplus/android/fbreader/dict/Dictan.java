@@ -19,15 +19,14 @@
 
 package org.geometerplus.android.fbreader.dict;
 
-import com.github.johnpersano.supertoasts.SuperActivityToast;
-import com.github.johnpersano.supertoasts.SuperToast;
-import com.github.johnpersano.supertoasts.util.OnClickWrapper;
-
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Parcelable;
 import android.view.View;
+
+import com.github.johnpersano.supertoasts.library.Style;
+import com.github.johnpersano.supertoasts.library.SuperActivityToast;
 
 import org.geometerplus.zlibrary.core.resources.ZLResource;
 
@@ -90,12 +89,9 @@ final class Dictan extends DictionaryUtil.PackageInfo {
 
 		final SuperActivityToast toast;
 		if (hasExtraData) {
-			toast = new SuperActivityToast(fbreader, SuperToast.Type.BUTTON);
-			toast.setButtonIcon(
-				android.R.drawable.ic_menu_more,
-				ZLResource.resource("toast").getResource("more").getValue()
-			);
-			toast.setOnClickWrapper(new OnClickWrapper("dict", new SuperToast.OnClickListener() {
+			toast = new SuperActivityToast(fbreader, Style.TYPE_BUTTON);
+			toast.setButtonIconResource(android.R.drawable.ic_menu_more);
+			toast.setOnButtonClickListener("dict", null, new SuperActivityToast.OnButtonClickListener() {
 				@Override
 				public void onClick(View view, Parcelable token) {
 					final String word = data.getStringExtra("article.word");
@@ -109,9 +105,9 @@ final class Dictan extends DictionaryUtil.PackageInfo {
 						// ignore
 					}
 				}
-			}));
+			});
 		} else {
-			toast = new SuperActivityToast(fbreader, SuperToast.Type.STANDARD);
+			toast = new SuperActivityToast(fbreader, Style.TYPE_STANDARD);
 		}
 		toast.setText(text);
 		toast.setDuration(DictionaryUtil.TranslationToastDurationOption.getValue().Value);
@@ -153,7 +149,7 @@ final class Dictan extends DictionaryUtil.PackageInfo {
 				break;
 		}
 
-		final SuperActivityToast toast = new SuperActivityToast(fbreader, SuperToast.Type.STANDARD);
+		final SuperActivityToast toast = new SuperActivityToast(fbreader, Style.TYPE_STANDARD);
 		toast.setText("Dictan: " + message);
 		toast.setDuration(DictionaryUtil.ErrorToastDurationOption.getValue().Value);
 		InternalUtil.showToast(toast, fbreader);

@@ -24,9 +24,8 @@ import android.content.Intent;
 import android.os.Parcelable;
 import android.view.View;
 
-import com.github.johnpersano.supertoasts.SuperActivityToast;
-import com.github.johnpersano.supertoasts.SuperToast;
-import com.github.johnpersano.supertoasts.util.OnClickWrapper;
+import com.github.johnpersano.supertoasts.library.Style;
+import com.github.johnpersano.supertoasts.library.SuperActivityToast;
 
 import org.geometerplus.android.fbreader.util.FBReaderAdapter;
 import org.geometerplus.zlibrary.core.resources.ZLResource;
@@ -47,10 +46,10 @@ public class SelectionBookmarkAction extends FBAndroidAction {
 	}
 
 	@Override
-	protected void run(Object ... params) {
+	protected void run(Object... params) {
 		final Bookmark bookmark;
 		if (params.length != 0) {
-			bookmark = (Bookmark)params[0];
+			bookmark = (Bookmark) params[0];
 		} else {
 			bookmark = Reader.addSelectionBookmark();
 		}
@@ -59,22 +58,19 @@ public class SelectionBookmarkAction extends FBAndroidAction {
 		}
 
 		final SuperActivityToast toast =
-			new SuperActivityToast(BaseActivity, SuperToast.Type.BUTTON);
+				new SuperActivityToast(BaseActivity, Style.TYPE_BUTTON);
 		toast.setText(bookmark.getText());
-		toast.setDuration(SuperToast.Duration.EXTRA_LONG);
-		toast.setButtonIcon(
-			android.R.drawable.ic_menu_edit,
-			ZLResource.resource("dialog").getResource("button").getResource("edit").getValue()
-		);
-		toast.setOnClickWrapper(new OnClickWrapper("bkmk", new SuperToast.OnClickListener() {
+		toast.setDuration(Style.DURATION_VERY_LONG);
+		toast.setButtonIconResource(android.R.drawable.ic_menu_edit);
+		toast.setOnButtonClickListener("bkmk", null, new SuperActivityToast.OnButtonClickListener() {
 			@Override
 			public void onClick(View view, Parcelable token) {
 				final Intent intent =
-					new Intent(BaseActivity.getApplicationContext(), EditBookmarkActivity.class);
+						new Intent(BaseActivity.getApplicationContext(), EditBookmarkActivity.class);
 				FBReaderIntents.putBookmarkExtra(intent, bookmark);
 				OrientationUtil.startActivity(BaseActivity, intent);
 			}
-		}));
+		});
 		fbReaderAdapter.showToast(toast);
 	}
 }

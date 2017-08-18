@@ -26,10 +26,9 @@ import android.net.Uri;
 import android.os.Parcelable;
 import android.view.View;
 
-import com.github.johnpersano.supertoasts.SuperActivityToast;
-import com.github.johnpersano.supertoasts.SuperToast;
-import com.github.johnpersano.supertoasts.util.OnClickWrapper;
-import com.github.johnpersano.supertoasts.util.OnDismissWrapper;
+import com.github.johnpersano.supertoasts.library.Style;
+import com.github.johnpersano.supertoasts.library.SuperActivityToast;
+import com.github.johnpersano.supertoasts.library.SuperToast;
 
 import org.geometerplus.android.fbreader.util.FBReaderAdapter;
 import org.geometerplus.zlibrary.core.network.ZLNetworkException;
@@ -107,30 +106,28 @@ class ProcessHyperlinkAction extends FBAndroidAction {
 					if (showToast) {
 						final SuperActivityToast toast;
 						if (snippet.IsEndOfText) {
-							toast = new SuperActivityToast(BaseActivity, SuperToast.Type.STANDARD);
+							toast = new SuperActivityToast(BaseActivity, Style.TYPE_STANDARD);
 						} else {
-							toast = new SuperActivityToast(BaseActivity, SuperToast.Type.BUTTON);
-							toast.setButtonIcon(
-								android.R.drawable.ic_menu_more,
-								ZLResource.resource("toast").getResource("more").getValue()
-							);
-							toast.setOnClickWrapper(new OnClickWrapper("ftnt", new SuperToast.OnClickListener() {
+							toast = new SuperActivityToast(BaseActivity, Style.TYPE_BUTTON);
+							toast.setButtonIconResource(android.R.drawable.ic_menu_more);
+							toast.setButtonText(ZLResource.resource("toast").getResource("more").getValue());
+							toast.setOnButtonClickListener("ftnt", null, new SuperActivityToast.OnButtonClickListener() {
 								@Override
 								public void onClick(View view, Parcelable token) {
 									Reader.getTextView().hideOutline();
 									Reader.tryOpenFootnote(hyperlink.Id);
 								}
-							}));
+							});
 						}
 						toast.setText(snippet.getText());
 						toast.setDuration(Reader.MiscOptions.FootnoteToastDuration.getValue().Value);
-						toast.setOnDismissWrapper(new OnDismissWrapper("ftnt", new SuperToast.OnDismissListener() {
+						toast.setOnDismissListener("ftnt", new SuperToast.OnDismissListener() {
 							@Override
-							public void onDismiss(View view) {
+							public void onDismiss(View view, Parcelable token) {
 								Reader.getTextView().hideOutline();
 								Reader.getViewWidget().repaint();
 							}
-						}));
+						});
 						Reader.getTextView().outlineRegion(region);
 						fbReaderAdapter.showToast(toast);
 					} else {
