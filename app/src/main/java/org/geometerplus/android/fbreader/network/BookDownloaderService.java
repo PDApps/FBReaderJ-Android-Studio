@@ -235,7 +235,7 @@ public class BookDownloaderService extends Service {
 		builder.setContentTitle(title);
 		builder.setContentText(contentText);
 		builder.getNotification().flags|=Notification.FLAG_AUTO_CANCEL;
-		builder.setSmallIcon(R.drawable.ic_launcher);
+		builder.setSmallIcon(R.drawable.fbreader_bw);
 //		builder.setContentIntent(contentIntent);
 //		Notification notification = builder.getNotification();
 //		manager.notify(R.drawable.ic_launcher, notification);

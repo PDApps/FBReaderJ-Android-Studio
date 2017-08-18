@@ -254,7 +254,6 @@ public abstract class NetworkLibraryActivity extends TreeActivity<NetworkTree> i
 		myOptionsMenuActions.add(new RunSearchAction(this, false));
 		myOptionsMenuActions.add(new AddCustomCatalogAction(this));
 		myOptionsMenuActions.add(new RefreshRootCatalogAction(this));
-		myOptionsMenuActions.add(new ManageCatalogsAction(this));
 		myOptionsMenuActions.add(new ReloadCatalogAction(this, myNetworkContext));
 		myOptionsMenuActions.add(new SignInAction(this));
 		myOptionsMenuActions.add(new SignUpAction(this));
@@ -287,7 +286,6 @@ public abstract class NetworkLibraryActivity extends TreeActivity<NetworkTree> i
 		myListClickActions.add(new AddCustomCatalogAction(this));
 		myListClickActions.add(new TopupAction(this));
 		myListClickActions.add(new ShowBookInfoAction(this, myNetworkContext));
-		myListClickActions.add(new ManageCatalogsAction(this));
 	}
 
 	private List<? extends Action> getContextMenuActions(NetworkTree tree) {

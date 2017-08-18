@@ -35,7 +35,6 @@ dependencies {
 
     compile 'com.github.yukuku:ambilwarna:2.0.1'
     compile project(':code')
-    compile project(':dragsortlistview')
     compile 'com.github.johnpersano:supertoasts:2.0'
     compile files('libs/httpcore-4.4.4.jar')
     compile files('libs/httpclient-4.5.2.jar')
