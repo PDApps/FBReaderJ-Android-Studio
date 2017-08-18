@@ -19,6 +19,7 @@
 
 package org.geometerplus.android.fbreader;
 
+import android.app.Activity;
 import android.content.Intent;
 
 import org.geometerplus.zlibrary.core.resources.ZLResource;
@@ -28,7 +29,7 @@ import org.geometerplus.fbreader.fbreader.FBView;
 import org.geometerplus.fbreader.util.TextSnippet;
 
 public class SelectionShareAction extends FBAndroidAction {
-	SelectionShareAction(FBReader baseActivity, FBReaderApp fbreader) {
+	SelectionShareAction(Activity baseActivity, FBReaderApp fbreader) {
 		super(baseActivity, fbreader);
 	}
 

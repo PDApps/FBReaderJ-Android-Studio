@@ -19,10 +19,12 @@
 
 package org.geometerplus.android.fbreader;
 
+import android.app.Activity;
+
 import org.geometerplus.fbreader.fbreader.FBReaderApp;
 
 class StartScreenAction extends FBAndroidAction {
-	StartScreenAction(FBReader baseActivity, FBReaderApp fbreader) {
+	StartScreenAction(Activity baseActivity, FBReaderApp fbreader) {
 		super(baseActivity, fbreader);
 	}
 

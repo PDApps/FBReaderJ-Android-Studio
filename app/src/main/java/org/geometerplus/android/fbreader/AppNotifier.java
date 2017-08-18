@@ -39,12 +39,12 @@ import org.geometerplus.fbreader.network.urlInfo.UrlInfo;
 import org.geometerplus.android.fbreader.network.BookDownloaderService;
 import org.geometerplus.android.fbreader.sync.MissingBookActivity;
 
-class AppNotifier implements FBReaderApp.Notifier {
+public class AppNotifier implements FBReaderApp.Notifier {
 	private final Activity myActivity;
 	private final ArrayList<String> myLatestHashes = new ArrayList<String>();
 	private volatile long myLatestNotificationStamp;
 
-	AppNotifier(Activity activity) {
+	public AppNotifier(Activity activity) {
 		myActivity = activity;
 	}
 

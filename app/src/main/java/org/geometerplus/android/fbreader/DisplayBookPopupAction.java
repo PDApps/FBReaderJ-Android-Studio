@@ -22,6 +22,7 @@ package org.geometerplus.android.fbreader;
 import java.io.File;
 import java.util.List;
 
+import android.app.Activity;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.TypedValue;
@@ -30,6 +31,7 @@ import android.view.View;
 import android.widget.PopupWindow;
 import android.widget.*;
 
+import org.geometerplus.android.fbreader.util.FBReaderAdapter;
 import org.geometerplus.zlibrary.core.network.ZLNetworkException;
 import org.geometerplus.zlibrary.core.network.QuietNetworkContext;
 import org.geometerplus.zlibrary.core.resources.ZLResource;
@@ -49,8 +51,10 @@ import org.geometerplus.android.util.UIMessageUtil;
 import org.geometerplus.android.util.UIUtil;
 
 class DisplayBookPopupAction extends FBAndroidAction {
-	DisplayBookPopupAction(FBReader baseActivity, FBReaderApp fbreader) {
+	private FBReaderAdapter fbReaderAdapter;
+	DisplayBookPopupAction(Activity baseActivity, FBReaderApp fbreader, FBReaderAdapter readerAdapter) {
 		super(baseActivity, fbreader);
+		this.fbReaderAdapter = readerAdapter;
 	}
 
 	private void openBook(final PopupWindow popup, final Book book) {
@@ -84,7 +88,7 @@ class DisplayBookPopupAction extends FBAndroidAction {
 			return;
 		}
 
-		final View mainView = (View)BaseActivity.getViewWidget();
+		final View mainView = (View)fbReaderAdapter.getViewWidget();
 		final View bookView = BaseActivity.getLayoutInflater().inflate(
 			ColorProfile.NIGHT.equals(Reader.ViewOptions.ColorProfileName.getValue())
 				? R.layout.book_popup_night : R.layout.book_popup,

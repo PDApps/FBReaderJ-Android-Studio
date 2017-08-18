@@ -19,20 +19,30 @@
 
 package org.geometerplus.android.fbreader;
 
+import android.app.Activity;
+
 import org.geometerplus.fbreader.fbreader.FBReaderApp;
+import org.geometerplus.zlibrary.text.view.ZLTextView;
 
 class SelectionShowPanelAction extends FBAndroidAction {
-	SelectionShowPanelAction(FBReader baseActivity, FBReaderApp fbreader) {
-		super(baseActivity, fbreader);
-	}
+    SelectionShowPanelAction(Activity baseActivity, FBReaderApp fbreader) {
+        super(baseActivity, fbreader);
+    }
 
-	@Override
-	public boolean isEnabled() {
-		return !Reader.getTextView().isSelectionEmpty();
-	}
+    @Override
+    public boolean isEnabled() {
+        return !Reader.getTextView().isSelectionEmpty();
+    }
 
-	@Override
-	protected void run(Object ... params) {
-		BaseActivity.showSelectionPanel();
-	}
+    @Override
+    protected void run(Object... params) {
+        showSelectionPanel();
+    }
+
+    public void showSelectionPanel() {
+        final ZLTextView view = Reader.getTextView();
+        ((SelectionPopup) Reader.getPopupById(SelectionPopup.ID))
+                .move(view.getSelectionStartY(), view.getSelectionEndY());
+        Reader.showPopup(SelectionPopup.ID);
+    }
 }

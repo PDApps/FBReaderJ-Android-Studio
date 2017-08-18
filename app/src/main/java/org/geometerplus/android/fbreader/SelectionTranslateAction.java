@@ -19,13 +19,15 @@
 
 package org.geometerplus.android.fbreader;
 
+import android.app.Activity;
+
 import org.geometerplus.fbreader.fbreader.*;
 import org.geometerplus.fbreader.util.TextSnippet;
 
 import org.geometerplus.android.fbreader.dict.DictionaryUtil;
 
 public class SelectionTranslateAction extends FBAndroidAction {
-	SelectionTranslateAction(FBReader baseActivity, FBReaderApp fbreader) {
+	SelectionTranslateAction(Activity baseActivity, FBReaderApp fbreader) {
 		super(baseActivity, fbreader);
 	}
 

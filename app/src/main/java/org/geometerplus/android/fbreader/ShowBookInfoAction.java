@@ -19,6 +19,7 @@
 
 package org.geometerplus.android.fbreader;
 
+import android.app.Activity;
 import android.content.Intent;
 
 import org.geometerplus.fbreader.fbreader.FBReaderApp;
@@ -28,7 +29,7 @@ import org.geometerplus.android.fbreader.library.BookInfoActivity;
 import org.geometerplus.android.util.OrientationUtil;
 
 class ShowBookInfoAction extends FBAndroidAction {
-	ShowBookInfoAction(FBReader baseActivity, FBReaderApp fbreader) {
+	ShowBookInfoAction(Activity baseActivity, FBReaderApp fbreader) {
 		super(baseActivity, fbreader);
 	}
 

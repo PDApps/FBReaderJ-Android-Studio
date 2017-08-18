@@ -19,12 +19,14 @@
 
 package org.geometerplus.android.fbreader;
 
+import android.app.Activity;
+
 import org.geometerplus.fbreader.book.Book;
 import org.geometerplus.fbreader.book.BookUtil;
 import org.geometerplus.fbreader.fbreader.FBReaderApp;
 
 public class ShareBookAction extends FBAndroidAction {
-	ShareBookAction(FBReader baseActivity, FBReaderApp fbreader) {
+	ShareBookAction(Activity baseActivity, FBReaderApp fbreader) {
 		super(baseActivity, fbreader);
 	}
 

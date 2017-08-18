@@ -19,6 +19,7 @@
 
 package org.geometerplus.android.fbreader;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.ActivityNotFoundException;
 import android.net.Uri;
@@ -30,6 +31,7 @@ import com.github.johnpersano.supertoasts.SuperToast;
 import com.github.johnpersano.supertoasts.util.OnClickWrapper;
 import com.github.johnpersano.supertoasts.util.OnDismissWrapper;
 
+import org.geometerplus.android.fbreader.util.FBReaderAdapter;
 import org.geometerplus.zlibrary.core.network.ZLNetworkException;
 import org.geometerplus.zlibrary.core.resources.ZLResource;
 import org.geometerplus.zlibrary.text.view.*;
@@ -48,8 +50,10 @@ import org.geometerplus.android.util.OrientationUtil;
 import org.geometerplus.android.util.UIMessageUtil;
 
 class ProcessHyperlinkAction extends FBAndroidAction {
-	ProcessHyperlinkAction(FBReader baseActivity, FBReaderApp fbreader) {
+	private FBReaderAdapter fbReaderAdapter;
+	ProcessHyperlinkAction(Activity baseActivity, FBReaderApp fbreader, FBReaderAdapter readerAdapter) {
 		super(baseActivity, fbreader);
+		this.fbReaderAdapter = readerAdapter;
 	}
 
 	@Override
@@ -128,7 +132,7 @@ class ProcessHyperlinkAction extends FBAndroidAction {
 							}
 						}));
 						Reader.getTextView().outlineRegion(region);
-						BaseActivity.showToast(toast);
+						fbReaderAdapter.showToast(toast);
 					} else {
 						Reader.tryOpenFootnote(hyperlink.Id);
 					}
@@ -162,7 +166,7 @@ class ProcessHyperlinkAction extends FBAndroidAction {
 				region.getBottom(),
 				new Runnable() {
 					public void run() {
-						BaseActivity.outlineRegion(soul);
+						fbReaderAdapter.outlineRegion(soul);
 					}
 				}
 			);

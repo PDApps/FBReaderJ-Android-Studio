@@ -19,6 +19,7 @@
 
 package org.geometerplus.android.fbreader;
 
+import android.app.Activity;
 import android.view.View;
 import android.widget.RelativeLayout;
 
@@ -40,7 +41,7 @@ class SelectionPopup extends PopupPanel implements View.OnClickListener {
 	}
 
 	@Override
-	public void createControlPanel(FBReader activity, RelativeLayout root) {
+	public void createControlPanel(Activity activity, RelativeLayout root) {
 		if (myWindow != null && activity == myWindow.getContext()) {
 			return;
 		}
@@ -93,6 +94,7 @@ class SelectionPopup extends PopupPanel implements View.OnClickListener {
 	protected void update() {
 	}
 
+	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.selection_panel_copy:

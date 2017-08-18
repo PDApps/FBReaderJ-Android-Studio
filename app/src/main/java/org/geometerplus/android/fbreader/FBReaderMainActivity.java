@@ -26,13 +26,14 @@ import android.view.WindowManager;
 
 import com.github.johnpersano.supertoasts.SuperActivityToast;
 
+import org.geometerplus.android.fbreader.util.FBReaderAdapter;
 import org.geometerplus.zlibrary.core.options.*;
 import org.geometerplus.zlibrary.ui.android.library.*;
 import org.geometerplus.zlibrary.ui.android.view.AndroidFontUtil;
 
 import org.geometerplus.android.fbreader.dict.DictionaryUtil;
 
-public abstract class FBReaderMainActivity extends Activity {
+public abstract class FBReaderMainActivity extends Activity implements FBReaderAdapter {
 	public static final int REQUEST_PREFERENCES = 1;
 	public static final int REQUEST_CANCEL_MENU = 2;
 	public static final int REQUEST_DICTIONARY = 3;
@@ -81,11 +82,13 @@ public abstract class FBReaderMainActivity extends Activity {
 	/* ------ SCREEN BRIGHTNESS ------ */
 
 	/* ++++++ SUPER TOAST ++++++ */
+	@Override
 	public boolean isToastShown() {
 		final SuperActivityToast toast = myToast;
 		return toast != null && toast.isShowing();
 	}
 
+	@Override
 	public void hideToast() {
 		final SuperActivityToast toast = myToast;
 		if (toast != null && toast.isShowing()) {
@@ -98,6 +101,7 @@ public abstract class FBReaderMainActivity extends Activity {
 		}
 	}
 
+	@Override
 	public void showToast(final SuperActivityToast toast) {
 		hideToast();
 		myToast = toast;

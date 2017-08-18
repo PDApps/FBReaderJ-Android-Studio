@@ -6,7 +6,7 @@ Compile By Tandong  2016.3.24
  *这里的so库是用ADT编译导入的，如果你需要修改包名，则需要重新编译so库，替换这里的so库即可。
  * QQ 852041173
  * Android开发者QQ群 271410559
- -->
+-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="org.geometerplus.zlibrary.ui.android"
@@ -18,6 +18,7 @@ Compile By Tandong  2016.3.24
         android:maxSdkVersion="10"
         android:minSdkVersion="5"
         android:targetSdkVersion="9" />
+
     <supports-screens
         android:anyDensity="true"
         android:largeScreens="true"
@@ -30,13 +31,14 @@ Compile By Tandong  2016.3.24
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:name="org.geometerplus.android.fbreader.FBReaderApplication"
         android:icon="@drawable/fbreader"
         android:label="@string/app_name"
-        tools:replace="android:icon"
-        android:logo="@drawable/fbreader_bw">
+        android:logo="@drawable/fbreader_bw"
+        tools:replace="android:icon">
         <activity
             android:name="org.geometerplus.android.fbreader.error.BookReadingErrorActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -44,7 +46,9 @@ Compile By Tandong  2016.3.24
             android:theme="@style/FBReader.Dialog">
             <intent-filter>
                 <action android:name="android.fbreader.action.ERROR" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:scheme="BookReadingException" />
             </intent-filter>
         </activity>
@@ -63,7 +67,9 @@ Compile By Tandong  2016.3.24
             android:theme="@style/FBReader.Dialog">
             <intent-filter>
                 <action android:name="android.fbreader.action.CRASH" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:scheme="CachedCharStorageException" />
             </intent-filter>
         </activity>
@@ -75,12 +81,16 @@ Compile By Tandong  2016.3.24
             android:theme="@style/FBReader.Dialog">
             <intent-filter>
                 <action android:name="android.fbreader.action.CRASH" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:scheme="ExceptionInInitializerError" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.fbreader.action.CRASH" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:scheme="UnsatisfiedLinkError" />
             </intent-filter>
         </activity>
@@ -90,10 +100,26 @@ Compile By Tandong  2016.3.24
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.fbreader.action.API" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </service>
 
+        <activity
+            android:name="org.geometerplus.android.fbreader.MainActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.fbreader.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity
             android:name="org.geometerplus.android.fbreader.FBReader"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -101,30 +127,38 @@ Compile By Tandong  2016.3.24
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:theme="@style/FBReader.Activity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
             <intent-filter>
                 <action android:name="android.fbreader.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.fbreader.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:scheme="file" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:scheme="fbreader-action" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.fbreader.action.PLUGIN" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data
@@ -145,6 +179,7 @@ Compile By Tandong  2016.3.24
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data
@@ -163,12 +198,14 @@ Compile By Tandong  2016.3.24
                 <data android:pathPattern=".*\\.cbr" />
                 <data android:pathPattern=".*\\.cbz" />
             </intent-filter>
-            <!--intent-filter>
+            <!--
+            intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="content" android:pathPattern=".*\\.fb2"/>
-            </intent-filter-->
+            </intent-filter
+            -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -203,10 +240,12 @@ Compile By Tandong  2016.3.24
 
             <intent-filter>
                 <action android:name="android.fbreader.action.CLOSE" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.fbreader.action.PLUGIN_CRASH" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -221,6 +260,7 @@ Compile By Tandong  2016.3.24
             android:theme="@style/FBReader.Dialog">
             <intent-filter>
                 <action android:name="android.fbreader.action.CANCEL_MENU" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -228,7 +268,6 @@ Compile By Tandong  2016.3.24
             android:name="org.geometerplus.android.fbreader.PluginListActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@style/FBReader.Dialog" />
-
         <activity
             android:name="org.geometerplus.android.fbreader.bookmark.BookmarksActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -238,11 +277,14 @@ Compile By Tandong  2016.3.24
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
+
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
+
             <intent-filter>
                 <action android:name="android.fbreader.action.BOOKMARKS" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -252,6 +294,7 @@ Compile By Tandong  2016.3.24
             android:theme="@style/FBReader.Dialog">
             <intent-filter>
                 <action android:name="android.fbreader.action.EDIT_BOOKMARK" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -261,10 +304,10 @@ Compile By Tandong  2016.3.24
             android:theme="@style/FBReader.Dialog">
             <intent-filter>
                 <action android:name="android.fbreader.action.EDIT_STYLES" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
         <activity
             android:name="org.geometerplus.android.fbreader.image.ImageViewActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -306,6 +349,7 @@ Compile By Tandong  2016.3.24
             android:theme="@style/FBReader.Activity">
             <intent-filter>
                 <action android:name="android.fbreader.action.BOOK_INFO" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -316,6 +360,7 @@ Compile By Tandong  2016.3.24
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
+
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
@@ -329,8 +374,10 @@ Compile By Tandong  2016.3.24
             <meta-data
                 android:name="android.app.default_searchable"
                 android:value="org.geometerplus.android.fbreader.library.LibrarySearchActivity" />
+
             <intent-filter>
                 <action android:name="android.fbreader.action.LIBRARY" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -345,11 +392,14 @@ Compile By Tandong  2016.3.24
             android:theme="@style/FBReader.Activity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:scheme="fbreader-preferences" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.fbreader.action.PREFERENCES" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -459,6 +509,7 @@ Compile By Tandong  2016.3.24
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
+
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
@@ -481,6 +532,7 @@ Compile By Tandong  2016.3.24
 
             <intent-filter>
                 <action android:name="android.fbreader.action.OPEN_NETWORK_CATALOG" />
+
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data
@@ -492,6 +544,7 @@ Compile By Tandong  2016.3.24
             </intent-filter>
             <intent-filter>
                 <action android:name="android.fbreader.action.NETWORK_LIBRARY" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -522,7 +575,9 @@ Compile By Tandong  2016.3.24
             android:theme="@style/FBReader.Dialog">
             <intent-filter>
                 <action android:name="android.fbreader.action.ADD_OPDS_CATALOG" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data
                     android:host="data.fbreader.org"
                     android:path="/add_catalog/editUrl"
@@ -540,14 +595,18 @@ Compile By Tandong  2016.3.24
             </intent-filter>
             <intent-filter>
                 <action android:name="android.fbreader.action.ADD_OPDS_CATALOG_URL" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data
                     android:host="*"
                     android:scheme="http" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.fbreader.action.ADD_OPDS_CATALOG_URL" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data
                     android:host="*"
                     android:scheme="https" />
@@ -580,7 +639,9 @@ Compile By Tandong  2016.3.24
             android:theme="@style/FBReader.Activity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data
                     android:host="*"
                     android:scheme="litres-book" />
@@ -596,6 +657,7 @@ Compile By Tandong  2016.3.24
             android:process=":networkLibrary">
             <intent-filter>
                 <action android:name="android.fbreader.action.network.SIGNIN" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
@@ -649,4 +711,5 @@ Compile By Tandong  2016.3.24
             android:exported="false"
             android:theme="@style/FBReader.Dialog" />
     </application>
+
 </manifest>

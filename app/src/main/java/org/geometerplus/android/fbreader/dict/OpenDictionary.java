@@ -21,6 +21,7 @@ package org.geometerplus.android.fbreader.dict;
 
 import java.util.*;
 
+import android.app.Activity;
 import android.content.Context;
 
 import com.paragon.dictionary.fbreader.OpenDictionaryFlyout;
@@ -58,7 +59,7 @@ final class OpenDictionary extends DictionaryUtil.PackageInfo {
 	}
 
 	@Override
-	void open(String text, Runnable outliner, FBReaderMainActivity fbreader, DictionaryUtil.PopupFrameMetric frameMetrics) {
+	void open(String text, Runnable outliner, Activity fbreader, DictionaryUtil.PopupFrameMetric frameMetrics) {
 		Flyout.showTranslation(fbreader, text, frameMetrics);
 	}
 }

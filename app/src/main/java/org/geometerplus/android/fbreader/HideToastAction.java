@@ -19,20 +19,26 @@
 
 package org.geometerplus.android.fbreader;
 
+import android.app.Activity;
+
+import org.geometerplus.android.fbreader.util.FBReaderAdapter;
 import org.geometerplus.fbreader.fbreader.FBReaderApp;
 
 public class HideToastAction extends FBAndroidAction {
-	HideToastAction(FBReader baseActivity, FBReaderApp fbreader) {
-		super(baseActivity, fbreader);
-	}
+    private FBReaderAdapter fbReaderAdapter;
 
-	@Override
-	public boolean isEnabled() {
-		return BaseActivity.isToastShown();
-	}
+    HideToastAction(Activity baseActivity, FBReaderApp fbreader, FBReaderAdapter readerAdapter) {
+        super(baseActivity, fbreader);
+        this.fbReaderAdapter = readerAdapter;
+    }
 
-	@Override
-	protected void run(Object ... params) {
-		BaseActivity.hideToast();
-	}
+    @Override
+    public boolean isEnabled() {
+        return fbReaderAdapter.isToastShown();
+    }
+
+    @Override
+    protected void run(Object... params) {
+        fbReaderAdapter.hideToast();
+    }
 }

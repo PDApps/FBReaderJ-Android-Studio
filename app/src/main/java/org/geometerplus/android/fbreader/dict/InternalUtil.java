@@ -45,7 +45,7 @@ abstract class InternalUtil {
 		activity.startActivity(intent);
 	}
 
-	static void startDictionaryActivity(FBReaderMainActivity fbreader, Intent intent, DictionaryUtil.PackageInfo info) {
+	static void startDictionaryActivity(Activity fbreader, Intent intent, DictionaryUtil.PackageInfo info) {
 		try {
 			fbreader.startActivity(intent);
 			fbreader.overridePendingTransition(0, 0);

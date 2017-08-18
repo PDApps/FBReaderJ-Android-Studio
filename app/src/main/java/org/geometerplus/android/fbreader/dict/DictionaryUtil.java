@@ -113,7 +113,7 @@ public abstract class DictionaryUtil {
 			// does nothing; implement in subclasses
 		}
 
-		abstract void open(String text, Runnable outliner, FBReaderMainActivity fbreader, PopupFrameMetric frameMetrics);
+		abstract void open(String text, Runnable outliner, Activity fbreader, PopupFrameMetric frameMetrics);
 	}
 
 	private static class PlainPackageInfo extends PackageInfo {
@@ -122,7 +122,7 @@ public abstract class DictionaryUtil {
 		}
 
 		@Override
-		void open(String text, Runnable outliner, FBReaderMainActivity fbreader, PopupFrameMetric frameMetrics) {
+		void open(String text, Runnable outliner, Activity fbreader, PopupFrameMetric frameMetrics) {
 			final Intent intent = getActionIntent(text);
 			intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 			intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -344,7 +344,7 @@ public abstract class DictionaryUtil {
 		}
 	}
 
-	public static void openTextInDictionary(final FBReaderMainActivity fbreader, String text, boolean singleWord, int selectionTop, int selectionBottom, final Runnable outliner) {
+	public static void openTextInDictionary(final Activity fbreader, String text, boolean singleWord, int selectionTop, int selectionBottom, final Runnable outliner) {
 		final String textToTranslate;
 		if (singleWord) {
 			int start = 0;

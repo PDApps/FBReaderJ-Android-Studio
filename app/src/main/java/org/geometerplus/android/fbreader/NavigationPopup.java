@@ -39,7 +39,7 @@ final class NavigationPopup extends ZLApplication.PopupPanel {
 	final static String ID = "NavigationPopup";
 
 	private volatile NavigationWindow myWindow;
-	private volatile FBReader myActivity;
+	private volatile Activity myActivity;
 	private volatile RelativeLayout myRoot;
 	private ZLTextWordCursor myStartPosition;
 	private final FBReaderApp myFBReader;
@@ -50,7 +50,7 @@ final class NavigationPopup extends ZLApplication.PopupPanel {
 		myFBReader = fbReader;
 	}
 
-	public void setPanelInfo(FBReader activity, RelativeLayout root) {
+	public void setPanelInfo(Activity activity, RelativeLayout root) {
 		myActivity = activity;
 		myRoot = root;
 	}
@@ -95,7 +95,7 @@ final class NavigationPopup extends ZLApplication.PopupPanel {
 		}
 	}
 
-	private void createPanel(FBReader activity, RelativeLayout root) {
+	private void createPanel(Activity activity, RelativeLayout root) {
 		if (myWindow != null && activity == myWindow.getContext()) {
 			return;
 		}

@@ -19,9 +19,11 @@
 
 package org.geometerplus.android.fbreader.dict;
 
+import android.app.Activity;
 import android.content.Intent;
 
 import org.geometerplus.android.fbreader.FBReaderMainActivity;
+import org.geometerplus.zlibrary.ui.android.library.ZLAndroidApplication;
 
 final class ColorDict extends DictionaryUtil.PackageInfo {
 	private interface ColorDict3 {
@@ -42,11 +44,11 @@ final class ColorDict extends DictionaryUtil.PackageInfo {
 	}
 
 	@Override
-	void open(String text, Runnable outliner, FBReaderMainActivity fbreader, DictionaryUtil.PopupFrameMetric frameMetrics) {
+	void open(String text, Runnable outliner, Activity fbreader, DictionaryUtil.PopupFrameMetric frameMetrics) {
 		final Intent intent = getActionIntent(text);
 		intent.putExtra(ColorDict3.HEIGHT, frameMetrics.Height);
 		intent.putExtra(ColorDict3.GRAVITY, frameMetrics.Gravity);
-		intent.putExtra(ColorDict3.FULLSCREEN, !fbreader.getZLibrary().ShowStatusBarOption.getValue());
+		intent.putExtra(ColorDict3.FULLSCREEN, !ZLAndroidApplication.getInstance().library().ShowStatusBarOption.getValue());
 		intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 		InternalUtil.startDictionaryActivity(fbreader, intent, this);

@@ -19,15 +19,24 @@
 
 package org.geometerplus.android.fbreader;
 
+import android.app.Activity;
+
 import org.geometerplus.fbreader.fbreader.FBReaderApp;
 
 class SelectionHidePanelAction extends FBAndroidAction {
-	SelectionHidePanelAction(FBReader baseActivity, FBReaderApp fbreader) {
-		super(baseActivity, fbreader);
-	}
+    SelectionHidePanelAction(Activity baseActivity, FBReaderApp fbreader) {
+        super(baseActivity, fbreader);
+    }
 
-	@Override
-	protected void run(Object ... params) {
-		BaseActivity.hideSelectionPanel();
-	}
+    @Override
+    protected void run(Object... params) {
+        hideSelectionPanel();
+    }
+
+    public void hideSelectionPanel() {
+        final FBReaderApp.PopupPanel popup = Reader.getActivePopup();
+        if (popup != null && popup.getId() == SelectionPopup.ID) {
+            Reader.hideActivePopup();
+        }
+    }
 }

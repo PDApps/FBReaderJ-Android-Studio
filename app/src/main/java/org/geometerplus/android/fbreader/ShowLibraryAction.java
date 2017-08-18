@@ -19,6 +19,7 @@
 
 package org.geometerplus.android.fbreader;
 
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 
@@ -30,7 +31,7 @@ import org.geometerplus.android.util.OrientationUtil;
 import org.geometerplus.android.util.PackageUtil;
 
 class ShowLibraryAction extends FBAndroidAction {
-	ShowLibraryAction(FBReader baseActivity, FBReaderApp fbreader) {
+	ShowLibraryAction(Activity baseActivity, FBReaderApp fbreader) {
 		super(baseActivity, fbreader);
 	}
 

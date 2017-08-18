@@ -22,9 +22,11 @@ package org.geometerplus.android.fbreader;
 import java.math.BigInteger;
 import java.util.Random;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.*;
 
+import org.geometerplus.android.fbreader.util.FBReaderAdapter;
 import org.geometerplus.zlibrary.core.options.Config;
 import org.geometerplus.zlibrary.core.options.ZLStringOption;
 import org.geometerplus.zlibrary.core.resources.ZLResource;
@@ -40,11 +42,13 @@ import org.geometerplus.android.util.PackageUtil;
 
 class ExternalFileOpener implements FBReaderApp.ExternalFileOpener {
 	private final String myPluginCode = new BigInteger(80, new Random()).toString();
-	private final FBReader myReader;
+	private final Activity context;
+	private final FBReaderAdapter readerAdapter;
 	private volatile AlertDialog myDialog;
 
-	ExternalFileOpener(FBReader reader) {
-		myReader = reader;
+	ExternalFileOpener(Activity context, FBReaderAdapter readerAdapter) {
+		this.context = context;
+		this.readerAdapter = readerAdapter;
 	}
 
 	public void openFile(final ExternalFormatPlugin plugin, final Book book, Bookmark bookmark) {
@@ -64,8 +68,8 @@ class ExternalFileOpener implements FBReaderApp.ExternalFileOpener {
 		Config.Instance().runOnConnect(new Runnable() {
 			public void run() {
 				try {
-					myReader.startActivity(intent);
-					myReader.overridePendingTransition(0, 0);
+					context.startActivity(intent);
+					context.overridePendingTransition(0, 0);
 				} catch (ActivityNotFoundException e) {
 					showErrorDialog(plugin, book);
 				}
@@ -77,27 +81,27 @@ class ExternalFileOpener implements FBReaderApp.ExternalFileOpener {
 		final ZLResource rootResource = ZLResource.resource("dialog");
 		final ZLResource buttonResource = rootResource.getResource("button");
 		final ZLResource dialogResource = rootResource.getResource("missingPlugin");
-		final AlertDialog.Builder builder = new AlertDialog.Builder(myReader)
+		final AlertDialog.Builder builder = new AlertDialog.Builder(context)
 			.setTitle(dialogResource.getValue())
 			.setMessage(dialogResource.getResource("message").getValue().replace("%s", plugin.supportedFileType()))
 			.setPositiveButton(buttonResource.getResource("yes").getValue(), new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					PackageUtil.installFromMarket(myReader, plugin.packageName());
+					PackageUtil.installFromMarket(context, plugin.packageName());
 					myDialog = null;
 				}
 			})
 			.setNegativeButton(buttonResource.getResource("no").getValue(), new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					myReader.onPluginNotFound(book);
+					readerAdapter.onPluginNotFound(book);
 					myDialog = null;
 				}
 			})
 			.setOnCancelListener(new DialogInterface.OnCancelListener() {
 				@Override
 				public void onCancel(DialogInterface dialog) {
-					myReader.onPluginNotFound(book);
+					readerAdapter.onPluginNotFound(book);
 					myDialog = null;
 				}
 			});
@@ -108,10 +112,10 @@ class ExternalFileOpener implements FBReaderApp.ExternalFileOpener {
 				myDialog.show();
 			}
 		};
-		if (!myReader.IsPaused) {
-			myReader.runOnUiThread(showDialog);
+		if (!readerAdapter.isPaused()) {
+			context.runOnUiThread(showDialog);
 		} else {
-			myReader.OnResumeAction = showDialog;
+			readerAdapter.setOnResumeAction(showDialog);
 		}
 	}
 }
