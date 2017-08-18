@@ -33,7 +33,7 @@ dependencies {
     compile files('libs/open-dictionary-api-1.2.1.jar')
     compile files('libs/pdfparse.jar')
 
-    compile project(':ambilWarna')
+    compile 'com.github.yukuku:ambilwarna:2.0.1'
     compile project(':code')
     compile project(':dragsortlistview')
     compile 'com.github.johnpersano:supertoasts:2.0'

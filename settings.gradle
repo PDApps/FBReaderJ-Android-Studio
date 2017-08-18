@@ -1,4 +1,3 @@
 include ':app'
-include ':ambilWarna'
 include ':code'
 include ':dragsortlistview'

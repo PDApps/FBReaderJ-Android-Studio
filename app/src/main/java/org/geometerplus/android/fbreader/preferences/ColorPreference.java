@@ -54,26 +54,24 @@ public abstract class ColorPreference extends Preference {
 
 	@Override
 	protected void onClick() {
-		final ZLResource buttonResource = ZLResource.resource("dialog").getResource("button");
-		new AmbilWarnaDialog(
-			getContext(),
-			ZLAndroidColorUtil.rgb(getSavedColor()),
-			new AmbilWarnaDialog.OnAmbilWarnaListener() {
-				@Override
-				public void onOk(AmbilWarnaDialog dialog, int color) {
-					if (!callChangeListener(color)) {
-						return;
+		AmbilWarnaDialog ambilWarnaDialog = new AmbilWarnaDialog(
+				getContext(),
+				ZLAndroidColorUtil.rgb(getSavedColor()),
+				new AmbilWarnaDialog.OnAmbilWarnaListener() {
+					@Override
+					public void onOk(AmbilWarnaDialog dialog, int color) {
+						if (!callChangeListener(color)) {
+							return;
+						}
+						saveColor(new ZLColor(color));
+						notifyChanged();
 					}
-					saveColor(new ZLColor(color));
-					notifyChanged();
-				}
 
-				@Override
-				public void onCancel(AmbilWarnaDialog dialog) {
+					@Override
+					public void onCancel(AmbilWarnaDialog dialog) {
+					}
 				}
-			},
-			buttonResource.getResource("ok").getValue(),
-			buttonResource.getResource("cancel").getValue()
-		).show();
+		);
+		ambilWarnaDialog.show();
 	}
 }
