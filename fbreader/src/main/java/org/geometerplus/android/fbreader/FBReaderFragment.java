@@ -73,7 +73,7 @@ import static android.content.Context.POWER_SERVICE;
  * Created by Andrew Churilo on 17.08.2017.
  */
 
-public class FBReaderFragment extends FBReaderBaseFragment implements ZLApplicationWindow {
+public abstract class FBReaderFragment extends FBReaderBaseFragment implements ZLApplicationWindow {
     public static final int RESULT_DO_NOTHING = RESULT_FIRST_USER;
     public static final int RESULT_REPAINT = RESULT_FIRST_USER + 1;
 
@@ -91,7 +91,7 @@ public class FBReaderFragment extends FBReaderBaseFragment implements ZLApplicat
     }
 
     private FBReaderApp myFBReaderApp;
-    private volatile Book myBook;
+    protected volatile Book myBook;
 
     private RelativeLayout myRootView;
     private ZLAndroidWidget myMainView;
@@ -150,9 +150,9 @@ public class FBReaderFragment extends FBReaderBaseFragment implements ZLApplicat
         myBook = FBReaderIntents.getBookExtra(intent, myFBReaderApp.Collection);
         final Bookmark bookmark = FBReaderIntents.getBookmarkExtra(intent);
         if (myBook == null) {
-            final Uri data = intent.getData();
-            if (data != null) {
-                myBook = createBookForFile(ZLFile.createFileByPath(data.getPath()));
+            String path = getPath();
+            if (path != null) {
+                myBook = createBookForFile(ZLFile.createFileByPath(path));
             }
         }
         if (myBook != null) {
@@ -175,7 +175,9 @@ public class FBReaderFragment extends FBReaderBaseFragment implements ZLApplicat
         });
     }
 
-    private Book createBookForFile(ZLFile file) {
+    protected abstract String getPath();
+
+    protected Book createBookForFile(ZLFile file) {
         if (file == null) {
             return null;
         }
