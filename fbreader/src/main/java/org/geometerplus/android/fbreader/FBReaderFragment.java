@@ -150,9 +150,9 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
         myBook = FBReaderIntents.getBookExtra(intent, myFBReaderApp.Collection);
         final Bookmark bookmark = FBReaderIntents.getBookmarkExtra(intent);
         if (myBook == null) {
-            String path = getPath();
-            if (path != null) {
-                myBook = createBookForFile(ZLFile.createFileByPath(path));
+            ZLFile zlFile = getZLFile();
+            if (zlFile != null) {
+                myBook = createBookForFile(zlFile);
             }
         }
         if (myBook != null) {
@@ -175,7 +175,7 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
         });
     }
 
-    protected abstract String getPath();
+    protected abstract ZLFile getZLFile();
 
     protected Book createBookForFile(ZLFile file) {
         if (file == null) {
