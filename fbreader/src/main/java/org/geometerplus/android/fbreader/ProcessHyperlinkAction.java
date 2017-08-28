@@ -23,6 +23,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Parcelable;
 import android.view.View;
+import android.widget.Toast;
 
 import com.github.johnpersano.supertoasts.library.Style;
 import com.github.johnpersano.supertoasts.library.SuperActivityToast;
@@ -31,6 +32,7 @@ import com.github.johnpersano.supertoasts.library.SuperToast;
 import org.geometerplus.android.fbreader.image.ImageViewActivity;
 import org.geometerplus.android.fbreader.util.FBReaderAdapter;
 import org.geometerplus.android.util.OrientationUtil;
+import org.geometerplus.fbreader.book.Book;
 import org.geometerplus.fbreader.bookmodel.FBHyperlinkType;
 import org.geometerplus.fbreader.fbreader.FBReaderApp;
 import org.geometerplus.fbreader.util.AutoTextSnippet;
@@ -151,5 +153,7 @@ class ProcessHyperlinkAction extends FBAndroidAction {
 
 	private void openInBrowser(final String url) {
 		// TODO: make method abstract. Add realisation to open Dicti WebView
+		Toast.makeText(BaseActivity, "For developers: Add realisation to open Dicti WebView", Toast.LENGTH_SHORT).show();
+
 	}
 }
