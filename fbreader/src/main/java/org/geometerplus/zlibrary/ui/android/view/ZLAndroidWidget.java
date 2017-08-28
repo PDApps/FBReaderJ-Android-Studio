@@ -36,7 +36,6 @@ import org.geometerplus.zlibrary.core.view.ZLViewWidget;
 import org.geometerplus.zlibrary.ui.android.view.animation.*;
 
 import org.geometerplus.fbreader.Paths;
-import org.geometerplus.android.fbreader.FBReader;
 
 public class ZLAndroidWidget extends MainView implements ZLViewWidget, View.OnLongClickListener {
 	public final ExecutorService PrepareService = Executors.newSingleThreadExecutor();
@@ -87,11 +86,6 @@ public class ZLAndroidWidget extends MainView implements ZLViewWidget, View.OnLo
 	@Override
 	protected void onDraw(final Canvas canvas) {
 		final Context context = getContext();
-		if (context instanceof FBReader) {
-			((FBReader)context).createWakeLock();
-		} else {
-			System.err.println("A surprise: view's context is not an FBReader");
-		}
 		super.onDraw(canvas);
 
 //		final int w = getWidth();

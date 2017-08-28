@@ -25,12 +25,10 @@ import org.geometerplus.zlibrary.text.model.ZLTextModel;
 
 final class CursorManager extends LruCache<Integer,ZLTextParagraphCursor> {
 	private final ZLTextModel myModel;
-	final ExtensionElementManager ExtensionManager;
 
-	CursorManager(ZLTextModel model, ExtensionElementManager extManager) {
+	CursorManager(ZLTextModel model) {
 		super(200); // max 200 cursors in the cache
 		myModel = model;
-		ExtensionManager = extManager;
 	}
 
 	@Override

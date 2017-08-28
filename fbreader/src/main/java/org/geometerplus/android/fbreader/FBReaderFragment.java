@@ -10,7 +10,6 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.PowerManager;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,8 +26,6 @@ import org.geometerplus.android.fbreader.api.MenuNode;
 import org.geometerplus.android.fbreader.api.PluginApi;
 import org.geometerplus.android.fbreader.httpd.DataService;
 import org.geometerplus.android.fbreader.libraryService.BookCollectionShadow;
-import org.geometerplus.android.fbreader.sync.SyncOperations;
-import org.geometerplus.android.fbreader.tips.TipsActivity;
 import org.geometerplus.android.util.DeviceType;
 import org.geometerplus.android.util.UIMessageUtil;
 import org.geometerplus.android.util.UIUtil;
@@ -38,11 +35,9 @@ import org.geometerplus.fbreader.book.BookUtil;
 import org.geometerplus.fbreader.book.Bookmark;
 import org.geometerplus.fbreader.bookmodel.BookModel;
 import org.geometerplus.fbreader.fbreader.ActionCode;
-import org.geometerplus.fbreader.fbreader.DictionaryHighlighting;
 import org.geometerplus.fbreader.fbreader.FBReaderApp;
 import org.geometerplus.fbreader.fbreader.options.CancelMenuHelper;
 import org.geometerplus.fbreader.fbreader.options.ColorProfile;
-import org.geometerplus.fbreader.tips.TipsManager;
 import org.geometerplus.zlibrary.core.application.ZLApplicationWindow;
 import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 import org.geometerplus.zlibrary.core.library.ZLibrary;
@@ -67,7 +62,6 @@ import java.util.Map;
 
 import static android.app.Activity.RESULT_FIRST_USER;
 import static android.app.Activity.RESULT_OK;
-import static android.content.Context.POWER_SERVICE;
 
 /**
  * Created by Andrew Churilo on 17.08.2017.
@@ -76,19 +70,6 @@ import static android.content.Context.POWER_SERVICE;
 public abstract class FBReaderFragment extends FBReaderBaseFragment implements ZLApplicationWindow {
     public static final int RESULT_DO_NOTHING = RESULT_FIRST_USER;
     public static final int RESULT_REPAINT = RESULT_FIRST_USER + 1;
-
-    public static Intent defaultIntent(Context context) {
-        return new Intent(context, FBReader.class)
-                .setAction(FBReaderIntents.Action.VIEW)
-                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-    }
-
-    public static void openBookActivity(Context context, Book book, Bookmark bookmark) {
-        final Intent intent = defaultIntent(context);
-        FBReaderIntents.putBookExtra(intent, book);
-        FBReaderIntents.putBookmarkExtra(intent, bookmark);
-        context.startActivity(intent);
-    }
 
     private FBReaderApp myFBReaderApp;
     protected volatile Book myBook;
@@ -107,8 +88,6 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
 
     private Intent myCancelIntent = null;
     private Intent myOpenBookIntent = null;
-
-    private FBReaderApp.Notifier myNotifier;
 
     private static final String PLUGIN_ACTION_PREFIX = "___";
     private final List<PluginApi.ActionInfo> myPluginActions =
@@ -139,7 +118,6 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        myNotifier = new AppNotifier(getActivity());
     }
 
     private synchronized void openBook(Intent intent, final Runnable action, boolean force) {
@@ -169,7 +147,7 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
         }
         Config.Instance().runOnConnect(new Runnable() {
             public void run() {
-                myFBReaderApp.openBook(myBook, bookmark, action, myNotifier);
+                myFBReaderApp.openBook(myBook, bookmark, action);
                 AndroidFontUtil.clearFontCache();
             }
         });
@@ -258,8 +236,6 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
         myFBReaderApp.addAction(ActionCode.SHOW_PREFERENCES, new ShowPreferencesAction(activity, myFBReaderApp));
         myFBReaderApp.addAction(ActionCode.SHOW_BOOK_INFO, new ShowBookInfoAction(activity, myFBReaderApp));
         myFBReaderApp.addAction(ActionCode.SHOW_TOC, new ShowTOCAction(activity, myFBReaderApp));
-        myFBReaderApp.addAction(ActionCode.SHOW_BOOKMARKS, new ShowBookmarksAction(activity, myFBReaderApp));
-        myFBReaderApp.addAction(ActionCode.SHOW_NETWORK_LIBRARY, new ShowNetworkLibraryAction(activity, myFBReaderApp));
 
         myFBReaderApp.addAction(ActionCode.SHOW_MENU, new ShowMenuAction(activity, myFBReaderApp));
         myFBReaderApp.addAction(ActionCode.SHOW_NAVIGATION, new ShowNavigationAction(activity, myFBReaderApp));
@@ -270,10 +246,7 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
         myFBReaderApp.addAction(ActionCode.SELECTION_HIDE_PANEL, new SelectionHidePanelAction(activity, myFBReaderApp));
         myFBReaderApp.addAction(ActionCode.SELECTION_COPY_TO_CLIPBOARD, new SelectionCopyAction(activity, myFBReaderApp));
         myFBReaderApp.addAction(ActionCode.SELECTION_SHARE, new SelectionShareAction(activity, myFBReaderApp));
-        myFBReaderApp.addAction(ActionCode.SELECTION_TRANSLATE, new SelectionTranslateAction(activity, myFBReaderApp));
-        myFBReaderApp.addAction(ActionCode.SELECTION_BOOKMARK, new SelectionBookmarkAction(activity, myFBReaderApp, this));
 
-        myFBReaderApp.addAction(ActionCode.DISPLAY_BOOK_POPUP, new DisplayBookPopupAction(activity, myFBReaderApp, this));
         myFBReaderApp.addAction(ActionCode.PROCESS_HYPERLINK, new ProcessHyperlinkAction(activity, myFBReaderApp, this));
         myFBReaderApp.addAction(ActionCode.OPEN_VIDEO, new OpenVideoAction(activity, myFBReaderApp, this));
         myFBReaderApp.addAction(ActionCode.HIDE_TOAST, new HideToastAction(activity, myFBReaderApp, this));
@@ -308,7 +281,7 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
                 myOpenBookIntent = null;
                 getCollection().bindToService(getActivity(), new Runnable() {
                     public void run() {
-                        myFBReaderApp.openBook(null, null, null, myNotifier);
+                        myFBReaderApp.openBook(null, null, null);
                     }
                 });
             }
@@ -347,10 +320,6 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
         Config.Instance().runOnConnect(new Runnable() {
             public void run() {
                 final boolean showStatusBar = zlibrary.ShowStatusBarOption.getValue();
-                if (showStatusBar != myShowStatusBarFlag) {
-                    getActivity().finish();
-                    startActivity(new Intent(getActivity(), FBReader.class));
-                }
                 zlibrary.ShowStatusBarOption.saveSpecialValue();
                 myFBReaderApp.ViewOptions.ColorProfileName.saveSpecialValue();
                 SetScreenOrientationAction.setOrientation(getActivity(), zlibrary.getOrientationOption().getValue());
@@ -382,49 +351,13 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
         );
     }
 
-    public class TipRunner extends Thread {
-        TipRunner() {
-            setPriority(MIN_PRIORITY);
-        }
-
-        public void run() {
-            final TipsManager manager = new TipsManager(Paths.systemInfo(getActivity()));
-            switch (manager.requiredAction()) {
-                case Initialize:
-                    startActivity(new Intent(
-                            TipsActivity.INITIALIZE_ACTION, null, getActivity(), TipsActivity.class
-                    ));
-                    break;
-                case Show:
-                    startActivity(new Intent(
-                            TipsActivity.SHOW_TIP_ACTION, null, getActivity(), TipsActivity.class
-                    ));
-                    break;
-                case Download:
-                    manager.startDownloading();
-                    break;
-                case None:
-                    break;
-            }
-        }
-    }
-
     @Override
     public void onResume() {
         super.onResume();
 
-        myStartTimer = true;
         Config.Instance().runOnConnect(new Runnable() {
             public void run() {
-                SyncOperations.enableSync(getActivity(), myFBReaderApp.SyncOptions);
-
-                final int brightnessLevel =
-                        getZLibrary().ScreenBrightnessLevelOption.getValue();
-                if (brightnessLevel != 0) {
-                    getViewWidget().setScreenBrightness(brightnessLevel);
-                } else {
-                    setScreenBrightnessAuto();
-                }
+                setScreenBrightnessAuto();
                 if (getZLibrary().DisableButtonLightsOption.getValue()) {
                     setButtonLight(false);
                 }
@@ -450,8 +383,6 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
             action.run();
         }
 
-        getActivity().registerReceiver(mySyncUpdateReceiver, new IntentFilter(FBReaderIntents.Event.SYNC_UPDATED));
-
         SetScreenOrientationAction.setOrientation(getActivity(), getZLibrary().getOrientationOption().getValue());
         if (myCancelIntent != null) {
             final Intent intent = myCancelIntent;
@@ -470,22 +401,10 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
                     openBook(intent, null, true);
                 }
             });
-        } else if (myFBReaderApp.getCurrentServerBook(null) != null) {
-            getCollection().bindToService(getActivity(), new Runnable() {
-                public void run() {
-                    myFBReaderApp.useSyncInfo(true, myNotifier);
-                }
-            });
         } else if (myFBReaderApp.Model == null && myFBReaderApp.ExternalBook != null) {
             getCollection().bindToService(getActivity(), new Runnable() {
                 public void run() {
-                    myFBReaderApp.openBook(myFBReaderApp.ExternalBook, null, null, myNotifier);
-                }
-            });
-        } else {
-            getCollection().bindToService(getActivity(), new Runnable() {
-                public void run() {
-                    myFBReaderApp.useSyncInfo(true, myNotifier);
+                    myFBReaderApp.openBook(myFBReaderApp.ExternalBook, null, null);
                 }
             });
         }
@@ -496,14 +415,7 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
 
     @Override
     public void onPause() {
-        SyncOperations.quickSync(getActivity(), myFBReaderApp.SyncOptions);
-
         IsPaused = true;
-        try {
-            getActivity().unregisterReceiver(mySyncUpdateReceiver);
-        } catch (IllegalArgumentException e) {
-        }
-
         try {
             getActivity().unregisterReceiver(myBatteryInfoReceiver);
         } catch (IllegalArgumentException e) {
@@ -664,7 +576,7 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
             public void run() {
                 final Book recent = collection.getRecentBook(0);
                 if (recent != null && !collection.sameBook(recent, book)) {
-                    myFBReaderApp.openBook(recent, null, null, null);
+                    myFBReaderApp.openBook(recent, null, null);
                 } else {
                     myFBReaderApp.openHelpBook();
                 }
@@ -716,54 +628,11 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
         getActivity().getWindow().setAttributes(attrs);
     }
 
-    private PowerManager.WakeLock myWakeLock;
-    private boolean myWakeLockToCreate;
-    private boolean myStartTimer;
-
-    public final void createWakeLock() {
-        if (myWakeLockToCreate) {
-            synchronized (this) {
-                if (myWakeLockToCreate) {
-                    myWakeLockToCreate = false;
-                    myWakeLock =
-                            ((PowerManager) getActivity().getSystemService(POWER_SERVICE))
-                                    .newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "FBReader");
-                    myWakeLock.acquire();
-                }
-            }
-        }
-        if (myStartTimer) {
-            myFBReaderApp.startTimer();
-            myStartTimer = false;
-        }
-    }
-
-    private final void switchWakeLock(boolean on) {
-        if (on) {
-            if (myWakeLock == null) {
-                myWakeLockToCreate = true;
-            }
-        } else {
-            if (myWakeLock != null) {
-                synchronized (this) {
-                    if (myWakeLock != null) {
-                        myWakeLock.release();
-                        myWakeLock = null;
-                    }
-                }
-            }
-        }
-    }
-
     private BroadcastReceiver myBatteryInfoReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             final int level = intent.getIntExtra("level", 100);
             final ZLAndroidApplication application = (ZLAndroidApplication) getActivity().getApplication();
             setBatteryLevel(level);
-            switchWakeLock(
-                    getActivity().hasWindowFocus() &&
-                            getZLibrary().BatteryLevelToTurnScreenOffOption.getValue() < level
-            );
         }
     };
 
@@ -882,12 +751,6 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
         });
     }
 
-    private BroadcastReceiver mySyncUpdateReceiver = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            myFBReaderApp.useSyncInfo(myResumeTimestamp + 10 * 1000 > System.currentTimeMillis(), myNotifier);
-        }
-    };
-
     @Override
     public void outlineRegion(ZLTextRegion.Soul soul) {
         myFBReaderApp.getTextView().outlineRegion(soul);
@@ -896,13 +759,6 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
 
     public void hideOutline() {
         myFBReaderApp.getTextView().hideOutline();
-        myFBReaderApp.getViewWidget().repaint();
-    }
-
-    public void hideDictionarySelection() {
-        myFBReaderApp.getTextView().hideOutline();
-        myFBReaderApp.getTextView().removeHighlightings(DictionaryHighlighting.class);
-        myFBReaderApp.getViewWidget().reset();
         myFBReaderApp.getViewWidget().repaint();
     }
 

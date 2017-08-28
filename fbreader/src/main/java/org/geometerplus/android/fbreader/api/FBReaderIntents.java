@@ -33,22 +33,14 @@ public abstract class FBReaderIntents {
 		String CANCEL_MENU                      = "android.fbreader.action.CANCEL_MENU";
 		String CONFIG_SERVICE                   = "android.fbreader.action.CONFIG_SERVICE";
 		String LIBRARY_SERVICE                  = "android.fbreader.action.LIBRARY_SERVICE";
-		String BOOK_INFO                        = "android.fbreader.action.BOOK_INFO";
-		String LIBRARY                          = "android.fbreader.action.LIBRARY";
 		String EXTERNAL_LIBRARY                 = "android.fbreader.action.EXTERNAL_LIBRARY";
-		String BOOKMARKS                        = "android.fbreader.action.BOOKMARKS";
 		String EXTERNAL_BOOKMARKS               = "android.fbreader.action.EXTERNAL_BOOKMARKS";
-		String PREFERENCES                      = "android.fbreader.action.PREFERENCES";
-		String NETWORK_LIBRARY                  = "android.fbreader.action.NETWORK_LIBRARY";
 		String OPEN_NETWORK_CATALOG             = "android.fbreader.action.OPEN_NETWORK_CATALOG";
 		String ERROR                            = "android.fbreader.action.ERROR";
 		String CRASH                            = "android.fbreader.action.CRASH";
 		String PLUGIN                           = "android.fbreader.action.PLUGIN";
 		String CLOSE                            = "android.fbreader.action.CLOSE";
 		String PLUGIN_CRASH                     = "android.fbreader.action.PLUGIN_CRASH";
-		String EDIT_STYLES                      = "android.fbreader.action.EDIT_STYLES";
-		String EDIT_BOOKMARK                    = "android.fbreader.action.EDIT_BOOKMARK";
-		String SWITCH_YOTA_SCREEN               = "android.fbreader.action.SWITCH_YOTA_SCREEN";
 
 		String SYNC_START                       = "android.fbreader.action.sync.START";
 		String SYNC_STOP                        = "android.fbreader.action.sync.STOP";
@@ -66,8 +58,6 @@ public abstract class FBReaderIntents {
 		String LIBRARY_BOOK                     = "fbreader.library_service.book_event";
 		String LIBRARY_BUILD                    = "fbreader.library_service.build_event";
 		String LIBRARY_COVER_READY              = "fbreader.library_service.cover_ready";
-
-		String SYNC_UPDATED                     = "android.fbreader.event.sync.UPDATED";
 	}
 
 	public interface Key {

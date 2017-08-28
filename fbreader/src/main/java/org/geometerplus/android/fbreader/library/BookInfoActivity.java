@@ -49,10 +49,7 @@ import org.geometerplus.zlibrary.ui.android.image.ZLAndroidImageManager;
 import org.geometerplus.fbreader.Paths;
 import org.geometerplus.fbreader.book.*;
 import org.geometerplus.fbreader.formats.PluginCollection;
-import org.geometerplus.fbreader.network.NetworkLibrary;
-import org.geometerplus.fbreader.network.HtmlUtil;
 
-import org.geometerplus.android.fbreader.FBReader;
 import org.geometerplus.android.fbreader.api.FBReaderIntents;
 import org.geometerplus.android.fbreader.libraryService.BookCollectionShadow;
 import org.geometerplus.android.fbreader.preferences.EditBookInfoActivity;
@@ -111,7 +108,7 @@ public class BookInfoActivity extends Activity implements IBookCollection.Listen
 				if (myDontReloadBook) {
 					finish();
 				} else {
-					FBReader.openBookActivity(BookInfoActivity.this, myBook, null);
+					Toast.makeText(BookInfoActivity.this, "FBActivity was deleted", Toast.LENGTH_SHORT).show();
 				}
 			}
 		});
@@ -272,7 +269,7 @@ public class BookInfoActivity extends Activity implements IBookCollection.Listen
 			bodyView.setVisibility(View.GONE);
 		} else {
 			titleView.setText(myResource.getResource("annotation").getValue());
-			bodyView.setText(HtmlUtil.getHtmlText(NetworkLibrary.Instance(Paths.systemInfo(this)), annotation));
+			bodyView.setText(annotation);
 			bodyView.setMovementMethod(new LinkMovementMethod());
 			bodyView.setTextColor(ColorStateList.valueOf(bodyView.getTextColors().getDefaultColor()));
 		}

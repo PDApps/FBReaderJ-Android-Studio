@@ -1,6 +1,5 @@
 package org.geometerplus.android.fbreader;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -8,15 +7,12 @@ import android.view.WindowManager;
 
 import com.github.johnpersano.supertoasts.library.SuperActivityToast;
 
-import org.geometerplus.android.fbreader.dict.DictionaryUtil;
 import org.geometerplus.android.fbreader.util.FBReaderAdapter;
 import org.geometerplus.zlibrary.core.options.ZLIntegerOption;
 import org.geometerplus.zlibrary.core.options.ZLIntegerRangeOption;
-import org.geometerplus.zlibrary.core.options.ZLStringOption;
 import org.geometerplus.zlibrary.ui.android.library.UncaughtExceptionHandler;
 import org.geometerplus.zlibrary.ui.android.library.ZLAndroidApplication;
 import org.geometerplus.zlibrary.ui.android.library.ZLAndroidLibrary;
-import org.geometerplus.zlibrary.ui.android.view.AndroidFontUtil;
 
 /**
  * Created by Andrew Churilo on 17.08.2017.
@@ -32,24 +28,13 @@ public abstract class FBReaderBaseFragment extends Fragment implements FBReaderA
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mInstance = this;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(getActivity()));
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            default:
-                super.onActivityResult(requestCode, resultCode, data);
-                break;
-            case REQUEST_DICTIONARY:
-                DictionaryUtil.onActivityResult(null, resultCode, data);
-                break;
-        }
     }
 
     public ZLAndroidLibrary getZLibrary() {
@@ -111,7 +96,11 @@ public abstract class FBReaderBaseFragment extends Fragment implements FBReaderA
             }
         });
     }
-	/* ------ SUPER TOAST ------ */
 
-    public abstract void hideDictionarySelection();
+    private static FBReaderBaseFragment mInstance;
+
+    public static FBReaderBaseFragment getInstance() {
+        return mInstance;
+    }
+    /* ------ SUPER TOAST ------ */
 }

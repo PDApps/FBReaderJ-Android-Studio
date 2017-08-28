@@ -23,7 +23,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 
-import org.geometerplus.android.fbreader.FBReaderMainActivity;
+import org.geometerplus.android.fbreader.FBReaderBaseFragment;
 
 public abstract class MainView extends View {
 	protected Integer myColorLevel;
@@ -47,11 +47,6 @@ public abstract class MainView extends View {
 			percent = 100;
 		}
 
-		final Context context = getContext();
-		if (!(context instanceof FBReaderMainActivity)) {
-			return;
-		}
-
 		final float level;
 		final Integer oldColorLevel = myColorLevel;
 		if (percent >= 25) {
@@ -63,9 +58,12 @@ public abstract class MainView extends View {
 			myColorLevel = 0x60 + (0xFF - 0x60) * Math.max(percent, 0) / 25;
 		}
 
-		final FBReaderMainActivity activity = (FBReaderMainActivity)context;
-		activity.getZLibrary().ScreenBrightnessLevelOption.setValue(percent);
-		activity.setScreenBrightnessSystem(level);
+		final FBReaderBaseFragment activity = FBReaderBaseFragment.getInstance();
+		if (activity != null) {
+			activity.getZLibrary().ScreenBrightnessLevelOption.setValue(percent);
+			activity.setScreenBrightnessSystem(level);
+		}
+
 		if (oldColorLevel != myColorLevel) {
 			updateColorLevel();
 			postInvalidate();
@@ -77,13 +75,13 @@ public abstract class MainView extends View {
 			return (myColorLevel - 0x60) * 25 / (0xFF - 0x60);
 		}
 
-		final Context context = getContext();
-		if (!(context instanceof FBReaderMainActivity)) {
+		final FBReaderBaseFragment activity = FBReaderBaseFragment.getInstance();
+		if (activity == null) {
 			return 50;
 		}
-		final float level = ((FBReaderMainActivity)context).getScreenBrightnessSystem();
+		final float level = activity.getScreenBrightnessSystem();
 		// level = .01f + (percent - 25) * .99f / 75;
-		return 25 + (int)((level - .01f) * 75 / .99f);
+		return 25 + (int) ((level - .01f) * 75 / .99f);
 	}
 
 	protected abstract void updateColorLevel();

@@ -36,7 +36,7 @@ class ShowCancelMenuAction extends FBAndroidAction {
 			if (Reader.hasCancelActions()) {
 				BaseActivity.startActivityForResult(
 					FBReaderIntents.defaultInternalIntent(FBReaderIntents.Action.CANCEL_MENU),
-					FBReader.REQUEST_CANCEL_MENU
+					FBReaderBaseFragment.REQUEST_CANCEL_MENU
 				);
 			} else {
 				Reader.closeWindow();

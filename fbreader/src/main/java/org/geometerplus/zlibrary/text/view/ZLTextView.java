@@ -71,7 +71,7 @@ public abstract class ZLTextView extends ZLTextViewBase {
 	}
 
 	public synchronized void setModel(ZLTextModel model) {
-		myCursorManager = model != null ? new CursorManager(model, getExtensionManager()) : null;
+		myCursorManager = model != null ? new CursorManager(model) : null;
 
 		mySelection.clear();
 		myHighlightings.clear();
@@ -1806,6 +1806,4 @@ public abstract class ZLTextView extends ZLTextViewBase {
 	ZLTextParagraphCursor cursor(int index) {
 		return myCursorManager.get(index);
 	}
-
-	protected abstract ExtensionElementManager getExtensionManager();
 }

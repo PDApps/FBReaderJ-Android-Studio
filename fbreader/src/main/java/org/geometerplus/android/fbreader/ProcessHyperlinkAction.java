@@ -21,8 +21,6 @@ package org.geometerplus.android.fbreader;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.ActivityNotFoundException;
-import android.net.Uri;
 import android.os.Parcelable;
 import android.view.View;
 
@@ -30,23 +28,17 @@ import com.github.johnpersano.supertoasts.library.Style;
 import com.github.johnpersano.supertoasts.library.SuperActivityToast;
 import com.github.johnpersano.supertoasts.library.SuperToast;
 
-import org.geometerplus.android.fbreader.util.FBReaderAdapter;
-import org.geometerplus.zlibrary.core.network.ZLNetworkException;
-import org.geometerplus.zlibrary.core.resources.ZLResource;
-import org.geometerplus.zlibrary.text.view.*;
-
-import org.geometerplus.fbreader.Paths;
-import org.geometerplus.fbreader.fbreader.FBReaderApp;
-import org.geometerplus.fbreader.bookmodel.FBHyperlinkType;
-import org.geometerplus.fbreader.network.NetworkLibrary;
-import org.geometerplus.fbreader.util.AutoTextSnippet;
-
-import org.geometerplus.android.fbreader.dict.DictionaryUtil;
 import org.geometerplus.android.fbreader.image.ImageViewActivity;
-import org.geometerplus.android.fbreader.network.*;
-import org.geometerplus.android.fbreader.network.auth.ActivityNetworkContext;
+import org.geometerplus.android.fbreader.util.FBReaderAdapter;
 import org.geometerplus.android.util.OrientationUtil;
-import org.geometerplus.android.util.UIMessageUtil;
+import org.geometerplus.fbreader.bookmodel.FBHyperlinkType;
+import org.geometerplus.fbreader.fbreader.FBReaderApp;
+import org.geometerplus.fbreader.util.AutoTextSnippet;
+import org.geometerplus.zlibrary.core.resources.ZLResource;
+import org.geometerplus.zlibrary.text.view.ZLTextHyperlink;
+import org.geometerplus.zlibrary.text.view.ZLTextHyperlinkRegionSoul;
+import org.geometerplus.zlibrary.text.view.ZLTextImageRegionSoul;
+import org.geometerplus.zlibrary.text.view.ZLTextRegion;
 
 class ProcessHyperlinkAction extends FBAndroidAction {
 	private FBReaderAdapter fbReaderAdapter;
@@ -154,55 +146,10 @@ class ProcessHyperlinkAction extends FBAndroidAction {
 					e.printStackTrace();
 				}
 			}
-		} else if (soul instanceof ZLTextWordRegionSoul) {
-			DictionaryUtil.openTextInDictionary(
-				BaseActivity,
-				((ZLTextWordRegionSoul)soul).Word.getString(),
-				true,
-				region.getTop(),
-				region.getBottom(),
-				new Runnable() {
-					public void run() {
-						fbReaderAdapter.outlineRegion(soul);
-					}
-				}
-			);
 		}
 	}
 
 	private void openInBrowser(final String url) {
-		final Intent intent = new Intent(Intent.ACTION_VIEW);
-		final boolean externalUrl;
-		if (BookDownloader.acceptsUri(Uri.parse(url), null)) {
-			intent.setClass(BaseActivity, BookDownloader.class);
-			intent.putExtra(BookDownloaderService.Key.SHOW_NOTIFICATIONS, BookDownloaderService.Notifications.ALL);
-			externalUrl = false;
-		} else {
-			externalUrl = true;
-		}
-		final NetworkLibrary nLibrary = NetworkLibrary.Instance(Paths.systemInfo(BaseActivity));
-		new Thread(new Runnable() {
-			public void run() {
-				if (!url.startsWith("fbreader-action:")) {
-					try {
-						nLibrary.initialize(new ActivityNetworkContext(BaseActivity));
-					} catch (ZLNetworkException e) {
-						e.printStackTrace();
-						UIMessageUtil.showMessageText(BaseActivity, e.getMessage());
-						return;
-					}
-				}
-				intent.setData(Util.rewriteUri(Uri.parse(nLibrary.rewriteUrl(url, externalUrl))));
-				BaseActivity.runOnUiThread(new Runnable() {
-					public void run() {
-						try {
-							OrientationUtil.startActivity(BaseActivity, intent);
-						} catch (ActivityNotFoundException e) {
-							e.printStackTrace();
-						}
-					}
-				});
-			}
-		}).start();
+		// TODO: make method abstract. Add realisation to open Dicti WebView
 	}
 }

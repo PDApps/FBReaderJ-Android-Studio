@@ -19,45 +19,43 @@
 
 package org.geometerplus.android.fbreader.preferences;
 
-import java.text.DecimalFormatSymbols;
-import java.util.*;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.view.KeyEvent;
 
+import org.geometerplus.android.fbreader.libraryService.BookCollectionShadow;
+import org.geometerplus.android.fbreader.preferences.background.BackgroundPreference;
+import org.geometerplus.android.util.DeviceType;
+import org.geometerplus.fbreader.fbreader.ActionCode;
+import org.geometerplus.fbreader.fbreader.FBReaderApp;
+import org.geometerplus.fbreader.fbreader.FBView;
+import org.geometerplus.fbreader.fbreader.options.CancelMenuHelper;
+import org.geometerplus.fbreader.fbreader.options.ColorProfile;
+import org.geometerplus.fbreader.fbreader.options.EInkOptions;
+import org.geometerplus.fbreader.fbreader.options.FooterOptions;
+import org.geometerplus.fbreader.fbreader.options.ImageOptions;
+import org.geometerplus.fbreader.fbreader.options.MiscOptions;
+import org.geometerplus.fbreader.fbreader.options.PageTurningOptions;
+import org.geometerplus.fbreader.fbreader.options.ViewOptions;
 import org.geometerplus.zlibrary.core.application.ZLKeyBindings;
 import org.geometerplus.zlibrary.core.language.Language;
-import org.geometerplus.zlibrary.core.network.ZLNetworkException;
-import org.geometerplus.zlibrary.core.network.JsonRequest;
-import org.geometerplus.zlibrary.core.options.*;
+import org.geometerplus.zlibrary.core.options.Config;
+import org.geometerplus.zlibrary.core.options.ZLIntegerRangeOption;
+import org.geometerplus.zlibrary.core.options.ZLStringOption;
 import org.geometerplus.zlibrary.core.resources.ZLResource;
-
-import org.geometerplus.zlibrary.text.view.style.*;
-
+import org.geometerplus.zlibrary.text.view.style.ZLTextBaseStyle;
+import org.geometerplus.zlibrary.text.view.style.ZLTextNGStyleDescription;
+import org.geometerplus.zlibrary.text.view.style.ZLTextStyleCollection;
 import org.geometerplus.zlibrary.ui.android.library.ZLAndroidLibrary;
 import org.geometerplus.zlibrary.ui.android.view.ZLAndroidPaintContext;
 
-import org.geometerplus.fbreader.Paths;
-import org.geometerplus.fbreader.bookmodel.FBTextKind;
-import org.geometerplus.fbreader.fbreader.*;
-import org.geometerplus.fbreader.fbreader.options.*;
-import org.geometerplus.fbreader.network.sync.SyncData;
-import org.geometerplus.fbreader.network.sync.SyncUtil;
-import org.geometerplus.fbreader.tips.TipsManager;
-
-import org.geometerplus.android.fbreader.FBReader;
-import org.geometerplus.android.fbreader.dict.DictionaryUtil;
-import org.geometerplus.android.fbreader.libraryService.BookCollectionShadow;
-import org.geometerplus.android.fbreader.network.auth.ActivityNetworkContext;
-import org.geometerplus.android.fbreader.preferences.background.BackgroundPreference;
-import org.geometerplus.android.fbreader.sync.SyncOperations;
-
-import org.geometerplus.android.util.UIUtil;
-import org.geometerplus.android.util.DeviceType;
+import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 
 public class PreferenceActivity extends ZLPreferenceActivity {
-	private final ActivityNetworkContext myNetworkContext = new ActivityNetworkContext(this);
 	private static final int BACKGROUND_REQUEST_CODE = 3000;
 	private BackgroundPreference myBackgroundPreference;
 
@@ -68,15 +66,10 @@ public class PreferenceActivity extends ZLPreferenceActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		myNetworkContext.onResume();
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (myNetworkContext.onActivityResult(requestCode, resultCode, data)) {
-			return;
-		}
-
 		if (resultCode != RESULT_OK) {
 			return;
 		}
@@ -100,14 +93,12 @@ public class PreferenceActivity extends ZLPreferenceActivity {
 		config.requestAllValuesForGroup("Scrolling");
 		config.requestAllValuesForGroup("Colors");
 		config.requestAllValuesForGroup("Sync");
-		setResult(FBReader.RESULT_REPAINT);
 
 		final ViewOptions viewOptions = new ViewOptions();
 		final MiscOptions miscOptions = new MiscOptions();
 		final FooterOptions footerOptions = viewOptions.getFooterOptions();
 		final PageTurningOptions pageTurningOptions = new PageTurningOptions();
 		final ImageOptions imageOptions = new ImageOptions();
-		final SyncOptions syncOptions = new SyncOptions();
 		final ColorProfile profile = viewOptions.getColorProfile();
 		final ZLTextStyleCollection collection = viewOptions.getTextStyleCollection();
 		final ZLKeyBindings keyBindings = new ZLKeyBindings();
@@ -131,92 +122,6 @@ public class PreferenceActivity extends ZLPreferenceActivity {
 			}
 		};
 		final PreferenceSet fontReloader = new PreferenceSet.Reloader();
-		final Screen syncScreen = createPreferenceScreen("sync");
-		final PreferenceSet syncPreferences = new PreferenceSet.Enabler() {
-			@Override
-			protected Boolean detectState() {
-				return syncOptions.Enabled.getValue();
-			}
-		};
-		syncScreen.addPreference(new UrlPreference(this, syncScreen.Resource, "site"));
-		syncScreen.addPreference(new ZLCheckBoxPreference(
-			this, syncScreen.Resource.getResource("enable")
-		) {
-			{
-				if (syncOptions.Enabled.getValue()) {
-					setChecked(true);
-					setOnSummary(SyncUtil.getAccountName(myNetworkContext));
-				} else {
-					setChecked(false);
-				}
-			}
-
-			private void enableSynchronisation() {
-				SyncOperations.enableSync(PreferenceActivity.this, syncOptions);
-			}
-
-			@Override
-			protected void onClick() {
-				super.onClick();
-				syncPreferences.run();
-
-				if (!isChecked()) {
-					SyncUtil.logout(myNetworkContext);
-					syncOptions.Enabled.setValue(false);
-					enableSynchronisation();
-					syncPreferences.run();
-					new SyncData().reset();
-					return;
-				}
-
-				UIUtil.createExecutor(PreferenceActivity.this, "tryConnect").execute(new Runnable() {
-					public void run() {
-						try {
-							myNetworkContext.perform(
-								new JsonRequest(SyncOptions.BASE_URL + "login/test") {
-									@Override
-									public void processResponse(Object response) {
-										final String account = (String)((Map)response).get("user");
-										syncOptions.Enabled.setValue(account != null);
-										enableSynchronisation();
-										runOnUiThread(new Runnable() {
-											public void run() {
-												setOnSummary(account);
-												syncPreferences.run();
-											}
-										});
-									}
-								}
-							);
-						} catch (ZLNetworkException e) {
-							e.printStackTrace();
-							runOnUiThread(new Runnable() {
-								public void run() {
-									setChecked(false);
-								}
-							});
-						}
-					}
-				}, null);
-			}
-
-			private void setOnSummary(String account) {
-				final String summary = account != null
-					? Resource.getResource("summaryOnWithAccount").getValue().replace("%s", account)
-					: Resource.getResource("summaryOn").getValue();
-				runOnUiThread(new Runnable() {
-					public void run() {
-						setSummaryOn(summary);
-					}
-				});
-			}
-		});
-		syncPreferences.add(syncScreen.addOption(syncOptions.UploadAllBooks, "uploadAllBooks", "values"));
-		syncPreferences.add(syncScreen.addOption(syncOptions.Positions, "positions", "values"));
-		syncPreferences.add(syncScreen.addOption(syncOptions.ChangeCurrentBook, "changeCurrentBook"));
-		//syncPreferences.add(syncScreen.addOption(syncOptions.Metainfo, "metainfo", "values"));
-		syncPreferences.add(syncScreen.addOption(syncOptions.Bookmarks, "bookmarks", "values"));
-		syncPreferences.run();
 
 		final Screen appearanceScreen = createPreferenceScreen("appearance");
 		appearanceScreen.addPreference(new LanguagePreference(
@@ -659,54 +564,6 @@ public class PreferenceActivity extends ZLPreferenceActivity {
 		languages.add(0, new Language(
 			Language.ANY_CODE, dictionaryScreen.Resource.getResource("targetLanguage")
 		));
-		final LanguagePreference targetLanguagePreference = new LanguagePreference(
-			this, dictionaryScreen.Resource.getResource("targetLanguage"), languages
-		) {
-			@Override
-			protected void init() {
-				setInitialValue(DictionaryUtil.TargetLanguageOption.getValue());
-			}
-
-			@Override
-			protected void setLanguage(String code) {
-				DictionaryUtil.TargetLanguageOption.setValue(code);
-			}
-		};
-
-		DictionaryUtil.init(this, new Runnable() {
-			public void run() {
-				dictionaryScreen.addPreference(new DictionaryPreference(
-					PreferenceActivity.this,
-					dictionaryScreen.Resource.getResource("dictionary"),
-					DictionaryUtil.singleWordTranslatorOption(),
-					DictionaryUtil.dictionaryInfos(PreferenceActivity.this, true)
-				) {
-					@Override
-					protected void onDialogClosed(boolean result) {
-						super.onDialogClosed(result);
-						targetLanguagePreference.setEnabled(
-							DictionaryUtil.getCurrentDictionaryInfo(true).SupportsTargetLanguageSetting
-						);
-					}
-				});
-				dictionaryScreen.addPreference(new DictionaryPreference(
-					PreferenceActivity.this,
-					dictionaryScreen.Resource.getResource("translator"),
-					DictionaryUtil.multiWordTranslatorOption(),
-					DictionaryUtil.dictionaryInfos(PreferenceActivity.this, false)
-				));
-				dictionaryScreen.addPreference(new ZLBooleanPreference(
-					PreferenceActivity.this,
-					miscOptions.NavigateAllWords,
-					dictionaryScreen.Resource.getResource("navigateOverAllWords")
-				));
-				dictionaryScreen.addOption(miscOptions.WordTappingAction, "longTapAction");
-				dictionaryScreen.addPreference(targetLanguagePreference);
-				targetLanguagePreference.setEnabled(
-					DictionaryUtil.getCurrentDictionaryInfo(true).SupportsTargetLanguageSetting
-				);
-			}
-		});
 
 		final Screen imagesScreen = createPreferenceScreen("images");
 		imagesScreen.addOption(imageOptions.TapAction, "longTapAction");
@@ -732,9 +589,6 @@ public class PreferenceActivity extends ZLPreferenceActivity {
 			this, cancelMenuScreen.Resource.getResource("backKeyLongPressAction"),
 			keyBindings.getOption(KeyEvent.KEYCODE_BACK, true), backKeyLongPressActions
 		));
-
-		final Screen tipsScreen = createPreferenceScreen("tips");
-		tipsScreen.addOption(TipsManager.ShowTipsOption, "showTips");
 
 		final Screen aboutScreen = createPreferenceScreen("about");
 		aboutScreen.addPreference(new InfoPreference(

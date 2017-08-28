@@ -29,6 +29,7 @@ import android.os.Bundle;
 import android.view.*;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.geometerplus.zlibrary.core.options.ZLStringOption;
 import org.geometerplus.zlibrary.core.resources.ZLResource;
@@ -240,7 +241,7 @@ public class LibraryActivity extends TreeActivity<LibraryTree> implements MenuIt
 	private boolean onContextItemSelected(int itemId, Book book) {
 		switch (itemId) {
 			case ContextItemId.OpenBook:
-				FBReader.openBookActivity(this, book, null);
+				Toast.makeText(this, "Open book activity deleted", Toast.LENGTH_SHORT).show();
 				return true;
 			case ContextItemId.ShowBookInfo:
 				showBookInfo(book);
