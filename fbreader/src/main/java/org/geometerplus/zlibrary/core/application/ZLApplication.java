@@ -113,12 +113,6 @@ public abstract class ZLApplication {
 		}
 	}
 
-	protected void processException(Exception e) {
-		if (myWindow != null) {
-			myWindow.processException(e);
-		}
-	}
-
 	public final ZLViewWidget getViewWidget() {
 		return myWindow != null ? myWindow.getViewWidget() : null;
 	}

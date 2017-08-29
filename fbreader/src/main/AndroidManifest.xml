@@ -26,26 +26,6 @@ Compile By Tandong  2016.3.24
         android:label="@string/app_name"
         android:logo="@drawable/fbreader_bw"
         tools:replace="android:icon">
-        <activity
-            android:name="org.geometerplus.android.fbreader.error.BookReadingErrorActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:process=":error"
-            android:theme="@style/FBReader.Dialog">
-            <intent-filter>
-                <action android:name="android.fbreader.action.ERROR" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:scheme="BookReadingException" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".error.BugReportActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:exported="false"
-            android:label="FBReader crash"
-            android:process=":crash"
-            android:theme="@style/FBReader.Activity" />
         <service
             android:name="org.geometerplus.android.fbreader.api.ApiService"
             android:launchMode="singleTask">

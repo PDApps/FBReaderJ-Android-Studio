@@ -26,7 +26,6 @@ public interface ZLApplicationWindow {
 	void showErrorMessage(String resourceKey);
 	void showErrorMessage(String resourceKey, String parameter);
 	ZLApplication.SynchronousExecutor createExecutor(String key);
-	void processException(Exception e);
 
 	void refresh();
 

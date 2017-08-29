@@ -19,15 +19,12 @@
 
 package org.geometerplus.zlibrary.ui.android.library;
 
-import java.io.*;
-
 import android.app.Activity;
-import android.content.*;
-import android.net.Uri;
+import android.content.Context;
 import android.os.Process;
 
-import org.geometerplus.zlibrary.ui.android.error.BugReportActivity;
-import org.geometerplus.android.fbreader.api.FBReaderIntents;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
 	private final Context myContext;
@@ -42,21 +39,8 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
 		exception.printStackTrace(new PrintWriter(stackTrace));
 		System.err.println(stackTrace);
 
-		Intent intent = new Intent(
-			FBReaderIntents.Action.CRASH,
-			new Uri.Builder().scheme(exception.getClass().getSimpleName()).build()
-		);
-		intent.setPackage(FBReaderIntents.DEFAULT_PACKAGE);
-		try {
-			myContext.startActivity(intent);
-		} catch (ActivityNotFoundException e) {
-			intent = new Intent(myContext, BugReportActivity.class);
-			intent.putExtra(BugReportActivity.STACKTRACE, stackTrace.toString());
-			myContext.startActivity(intent);
-		}
-
 		if (myContext instanceof Activity) {
-			((Activity)myContext).finish();
+			((Activity) myContext).finish();
 		}
 
 		Process.killProcess(Process.myPid());

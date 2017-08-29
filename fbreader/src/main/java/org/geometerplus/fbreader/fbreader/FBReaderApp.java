@@ -312,7 +312,7 @@ public final class FBReaderApp extends ZLApplication {
 		try {
 			plugin = BookUtil.getPlugin(pluginCollection, book);
 		} catch (BookReadingException e) {
-			processException(e);
+			e.printStackTrace();
 			return;
 		}
 
@@ -357,7 +357,7 @@ public final class FBReaderApp extends ZLApplication {
 			}
 			setTitle(title.toString());
 		} catch (BookReadingException e) {
-			processException(e);
+			e.printStackTrace();
 		}
 
 		getViewWidget().reset();

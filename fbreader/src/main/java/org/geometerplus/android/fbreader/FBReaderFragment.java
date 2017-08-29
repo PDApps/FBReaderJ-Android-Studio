@@ -46,7 +46,6 @@ import org.geometerplus.zlibrary.core.resources.ZLResource;
 import org.geometerplus.zlibrary.core.view.ZLViewWidget;
 import org.geometerplus.zlibrary.text.view.ZLTextRegion;
 import org.geometerplus.zlibrary.ui.android.R;
-import org.geometerplus.zlibrary.ui.android.error.ErrorKeys;
 import org.geometerplus.zlibrary.ui.android.library.ZLAndroidApplication;
 import org.geometerplus.zlibrary.ui.android.library.ZLAndroidLibrary;
 import org.geometerplus.zlibrary.ui.android.view.AndroidFontUtil;
@@ -711,35 +710,6 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
                 }
             }
         });
-    }
-
-    @Override
-    public void processException(Exception exception) {
-        exception.printStackTrace();
-
-        final Intent intent = new Intent(
-                FBReaderIntents.Action.ERROR,
-                new Uri.Builder().scheme(exception.getClass().getSimpleName()).build()
-        );
-        intent.setPackage(FBReaderIntents.DEFAULT_PACKAGE);
-        intent.putExtra(ErrorKeys.MESSAGE, exception.getMessage());
-        final StringWriter stackTrace = new StringWriter();
-        exception.printStackTrace(new PrintWriter(stackTrace));
-        intent.putExtra(ErrorKeys.STACKTRACE, stackTrace.toString());
-        /*
-		if (exception instanceof BookReadingException) {
-			final ZLFile file = ((BookReadingException)exception).File;
-			if (file != null) {
-				intent.putExtra("file", file.getPath());
-			}
-		}
-		*/
-        try {
-            startActivity(intent);
-        } catch (ActivityNotFoundException e) {
-            // ignore
-            e.printStackTrace();
-        }
     }
 
     @Override
