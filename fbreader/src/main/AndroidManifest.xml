@@ -82,34 +82,6 @@ Compile By Tandong  2016.3.24
             </intent-filter>
         </activity>
         <activity
-            android:name="org.geometerplus.android.fbreader.library.LibrarySearchActivity"
-            android:process=":library"
-            android:theme="@android:style/Theme.NoDisplay">
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
-        </activity>
-        <activity
-            android:name="org.geometerplus.android.fbreader.library.LibraryActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:launchMode="singleTask"
-            android:process=":library"
-            android:theme="@style/FBReader.Activity">
-            <meta-data
-                android:name="android.app.default_searchable"
-                android:value="org.geometerplus.android.fbreader.library.LibrarySearchActivity" />
-
-            <intent-filter>
-                <action android:name="android.fbreader.action.LIBRARY" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name="org.geometerplus.android.fbreader.TOCActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@style/FBReader.Activity" />

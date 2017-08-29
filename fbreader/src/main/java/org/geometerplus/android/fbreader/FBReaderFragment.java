@@ -231,7 +231,6 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
         }
 
         Activity activity = getActivity();
-        myFBReaderApp.addAction(ActionCode.SHOW_LIBRARY, new ShowLibraryAction(activity, myFBReaderApp));
         myFBReaderApp.addAction(ActionCode.SHOW_PREFERENCES, new ShowPreferencesAction(activity, myFBReaderApp));
         myFBReaderApp.addAction(ActionCode.SHOW_BOOK_INFO, new ShowBookInfoAction(activity, myFBReaderApp));
         myFBReaderApp.addAction(ActionCode.SHOW_TOC, new ShowTOCAction(activity, myFBReaderApp));
@@ -250,7 +249,6 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
         myFBReaderApp.addAction(ActionCode.OPEN_VIDEO, new OpenVideoAction(activity, myFBReaderApp, this));
         myFBReaderApp.addAction(ActionCode.HIDE_TOAST, new HideToastAction(activity, myFBReaderApp, this));
 
-        myFBReaderApp.addAction(ActionCode.SHOW_CANCEL_MENU, new ShowCancelMenuAction(activity, myFBReaderApp));
         myFBReaderApp.addAction(ActionCode.OPEN_START_SCREEN, new StartScreenAction(activity, myFBReaderApp));
 
         myFBReaderApp.addAction(ActionCode.SET_SCREEN_ORIENTATION_SYSTEM, new SetScreenOrientationAction(activity, myFBReaderApp, ZLibrary.SCREEN_ORIENTATION_SYSTEM));

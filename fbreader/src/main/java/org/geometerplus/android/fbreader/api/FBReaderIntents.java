@@ -29,26 +29,12 @@ public abstract class FBReaderIntents {
 	public interface Action {
 		String API                              = "android.fbreader.action.API";
 		String API_CALLBACK                     = "android.fbreader.action.API_CALLBACK";
-		String VIEW                             = "android.fbreader.action.VIEW";
-		String CANCEL_MENU                      = "android.fbreader.action.CANCEL_MENU";
 		String CONFIG_SERVICE                   = "android.fbreader.action.CONFIG_SERVICE";
 		String LIBRARY_SERVICE                  = "android.fbreader.action.LIBRARY_SERVICE";
-		String EXTERNAL_LIBRARY                 = "android.fbreader.action.EXTERNAL_LIBRARY";
-		String EXTERNAL_BOOKMARKS               = "android.fbreader.action.EXTERNAL_BOOKMARKS";
-		String OPEN_NETWORK_CATALOG             = "android.fbreader.action.OPEN_NETWORK_CATALOG";
-		String ERROR                            = "android.fbreader.action.ERROR";
-		String CRASH                            = "android.fbreader.action.CRASH";
-		String PLUGIN                           = "android.fbreader.action.PLUGIN";
 		String CLOSE                            = "android.fbreader.action.CLOSE";
 		String PLUGIN_CRASH                     = "android.fbreader.action.PLUGIN_CRASH";
 
-		String SYNC_START                       = "android.fbreader.action.sync.START";
-		String SYNC_STOP                        = "android.fbreader.action.sync.STOP";
-		String SYNC_SYNC                        = "android.fbreader.action.sync.SYNC";
-		String SYNC_QUICK_SYNC                  = "android.fbreader.action.sync.QUICK_SYNC";
-
 		String PLUGIN_VIEW                      = "android.fbreader.action.plugin.VIEW";
-		String PLUGIN_KILL                      = "android.fbreader.action.plugin.KILL";
 		String PLUGIN_CONNECT_COVER_SERVICE     = "android.fbreader.action.plugin.CONNECT_COVER_SERVICE";
 	}
 
