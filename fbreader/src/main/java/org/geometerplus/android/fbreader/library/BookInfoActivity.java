@@ -52,7 +52,6 @@ import org.geometerplus.fbreader.formats.PluginCollection;
 
 import org.geometerplus.android.fbreader.api.FBReaderIntents;
 import org.geometerplus.android.fbreader.libraryService.BookCollectionShadow;
-import org.geometerplus.android.fbreader.preferences.EditBookInfoActivity;
 import org.geometerplus.android.fbreader.util.AndroidImageSynchronizer;
 import org.geometerplus.android.util.OrientationUtil;
 
@@ -114,10 +113,7 @@ public class BookInfoActivity extends Activity implements IBookCollection.Listen
 		});
 		setupButton(R.id.book_info_button_edit, "edit", new View.OnClickListener() {
 			public void onClick(View view) {
-				final Intent intent =
-					new Intent(getApplicationContext(), EditBookInfoActivity.class);
-				FBReaderIntents.putBookExtra(intent, myBook);
-				OrientationUtil.startActivity(BookInfoActivity.this, intent);
+				Toast.makeText(BookInfoActivity.this, "EditBookInfoActivity was deleted", Toast.LENGTH_SHORT).show();
 			}
 		});
 		setupButton(R.id.book_info_button_reload, "reloadInfo", new View.OnClickListener() {
