@@ -22,37 +22,6 @@ package org.geometerplus.fbreader.book;
 import java.util.*;
 
 public abstract class AbstractBookCollection<B extends AbstractBook> implements IBookCollection<B> {
-	private final List<Listener> myListeners = Collections.synchronizedList(new LinkedList<Listener>());
-
-	public void addListener(Listener listener) {
-		if (!myListeners.contains(listener)) {
-			myListeners.add(listener);
-		}
-	}
-
-	public void removeListener(Listener listener) {
-		myListeners.remove(listener);
-	}
-
-	protected boolean hasListeners() {
-		return !myListeners.isEmpty();
-	}
-
-	protected void fireBookEvent(BookEvent event, B book) {
-		synchronized (myListeners) {
-			for (Listener l : myListeners) {
-				l.onBookEvent(event, book);
-			}
-		}
-	}
-
-	protected void fireBuildEvent(Status status) {
-		synchronized (myListeners) {
-			for (Listener l : myListeners) {
-				l.onBuildEvent(status);
-			}
-		}
-	}
 
 	public boolean sameBook(B b0, B b1) {
 		if (b0 == b1) {

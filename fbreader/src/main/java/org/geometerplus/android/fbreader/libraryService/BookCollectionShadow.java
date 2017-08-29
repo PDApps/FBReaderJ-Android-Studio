@@ -35,80 +35,23 @@ import org.geometerplus.fbreader.book.*;
 
 import org.geometerplus.android.fbreader.api.FBReaderIntents;
 
-public class BookCollectionShadow extends AbstractBookCollection<Book> implements ServiceConnection {
+public class BookCollectionShadow extends AbstractBookCollection<Book> {
 	private volatile Context myContext;
-	private volatile LibraryInterface myInterface;
-	private final List<Runnable> myOnBindActions = new LinkedList<Runnable>();
+	private volatile LibraryService.LibraryImplementation myInterface;
 
-	private final BroadcastReceiver myReceiver = new BroadcastReceiver() {
-		public void onReceive(Context context, Intent intent) {
-			if (!hasListeners()) {
-				return;
-			}
-
-			try {
-				final String type = intent.getStringExtra("type");
-				if (FBReaderIntents.Event.LIBRARY_BOOK.equals(intent.getAction())) {
-					final Book book = SerializerUtil.deserializeBook(intent.getStringExtra("book"), BookCollectionShadow.this);
-					fireBookEvent(BookEvent.valueOf(type), book);
-				} else {
-					fireBuildEvent(Status.valueOf(type));
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-		}
-	};
-
-	public synchronized boolean bindToService(Context context, Runnable onBindAction) {
-		if (myInterface != null && myContext == context) {
-			if (onBindAction != null) {
-				Config.Instance().runOnConnect(onBindAction);
-			}
-			return true;
-		} else {
-			if (onBindAction != null) {
-				synchronized (myOnBindActions) {
-					myOnBindActions.add(onBindAction);
-				}
-			}
-			final boolean result = context.bindService(
-				FBReaderIntents.internalIntent(FBReaderIntents.Action.LIBRARY_SERVICE),
-				this,
-				Service.BIND_AUTO_CREATE
-			);
-			if (result) {
-				myContext = context;
-			}
-			return result;
-		}
+	public BookCollectionShadow() {
+		myInterface = LibraryService.getImplementation();
 	}
 
-	public synchronized void unbind() {
-		if (myContext != null && myInterface != null) {
-			try {
-				myContext.unregisterReceiver(myReceiver);
-			} catch (IllegalArgumentException e) {
-				// called before regisration, that's ok
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			try {
-				myContext.unbindService(this);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			myInterface = null;
-			myContext = null;
+	public synchronized void bindToService(Context context, Runnable onBindAction) {
+		if (onBindAction != null) {
+			Config.Instance().runOnConnect(onBindAction);
 		}
 	}
 
 	public synchronized void reset(boolean force) {
 		if (myInterface != null) {
-			try {
-				myInterface.reset(force);
-			} catch (RemoteException e) {
-			}
+			myInterface.reset(force);
 		}
 	}
 
@@ -116,22 +59,14 @@ public class BookCollectionShadow extends AbstractBookCollection<Book> implement
 		if (myInterface == null) {
 			return 0;
 		}
-		try {
-			return myInterface.size();
-		} catch (RemoteException e) {
-			return 0;
-		}
+		return myInterface.size();
 	}
 
 	public synchronized Status status() {
 		if (myInterface == null) {
 			return Status.NotStarted;
 		}
-		try {
 			return Status.valueOf(myInterface.status());
-		} catch (Throwable t) {
-			return Status.NotStarted;
-		}
 	}
 
 	public List<Book> books(final BookQuery query) {
@@ -148,11 +83,7 @@ public class BookCollectionShadow extends AbstractBookCollection<Book> implement
 		if (myInterface == null) {
 			return false;
 		}
-		try {
 			return myInterface.hasBooks(SerializerUtil.serialize(new BookQuery(filter, 1)));
-		} catch (RemoteException e) {
-			return false;
-		}
 	}
 
 	public List<Book> recentlyAddedBooks(final int count) {
@@ -179,56 +110,35 @@ public class BookCollectionShadow extends AbstractBookCollection<Book> implement
 		if (myInterface == null) {
 			return null;
 		}
-		try {
 			return SerializerUtil.deserializeBook(myInterface.getRecentBook(index), this);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-			return null;
-		}
 	}
 
 	public synchronized Book getBookByFile(String path) {
 		if (myInterface == null) {
 			return null;
 		}
-		try {
 			return SerializerUtil.deserializeBook(myInterface.getBookByFile(path), this);
-		} catch (RemoteException e) {
-			return null;
-		}
 	}
 
 	public synchronized Book getBookById(long id) {
 		if (myInterface == null) {
 			return null;
 		}
-		try {
 			return SerializerUtil.deserializeBook(myInterface.getBookById(id), this);
-		} catch (RemoteException e) {
-			return null;
-		}
 	}
 
 	public synchronized Book getBookByUid(UID uid) {
 		if (myInterface == null) {
 			return null;
 		}
-		try {
 			return SerializerUtil.deserializeBook(myInterface.getBookByUid(uid.Type, uid.Id), this);
-		} catch (RemoteException e) {
-			return null;
-		}
 	}
 
 	public synchronized Book getBookByHash(String hash) {
 		if (myInterface == null) {
 			return null;
 		}
-		try {
 			return SerializerUtil.deserializeBook(myInterface.getBookByHash(hash), this);
-		} catch (RemoteException e) {
-			return null;
-		}
 	}
 
 	public List<Author> authors() {
@@ -259,10 +169,7 @@ public class BookCollectionShadow extends AbstractBookCollection<Book> implement
 
 	public synchronized boolean hasSeries() {
 		if (myInterface != null) {
-			try {
 				return myInterface.hasSeries();
-			} catch (RemoteException e) {
-			}
 		}
 		return false;
 	}
@@ -295,48 +202,31 @@ public class BookCollectionShadow extends AbstractBookCollection<Book> implement
 		if (myInterface == null) {
 			return false;
 		}
-		try {
 			return myInterface.saveBook(SerializerUtil.serialize(book));
-		} catch (RemoteException e) {
-			return false;
-		}
 	}
 
 	public synchronized boolean canRemoveBook(Book book, boolean deleteFromDisk) {
 		if (myInterface == null) {
 			return false;
 		}
-		try {
 			return myInterface.canRemoveBook(SerializerUtil.serialize(book), deleteFromDisk);
-		} catch (RemoteException e) {
-			return false;
-		}
 	}
 
 	public synchronized void removeBook(Book book, boolean deleteFromDisk) {
 		if (myInterface != null) {
-			try {
 				myInterface.removeBook(SerializerUtil.serialize(book), deleteFromDisk);
-			} catch (RemoteException e) {
-			}
 		}
 	}
 
 	public synchronized void addToRecentlyOpened(Book book) {
 		if (myInterface != null) {
-			try {
 				myInterface.addToRecentlyOpened(SerializerUtil.serialize(book));
-			} catch (RemoteException e) {
-			}
 		}
 	}
 
 	public synchronized void removeFromRecentlyOpened(Book book) {
 		if (myInterface != null) {
-			try {
 				myInterface.removeFromRecentlyOpened(SerializerUtil.serialize(book));
-			} catch (RemoteException e) {
-			}
 		}
 	}
 
@@ -352,21 +242,14 @@ public class BookCollectionShadow extends AbstractBookCollection<Book> implement
 		if (myInterface == null) {
 			return null;
 		}
-		try {
 			return myInterface.getHash(SerializerUtil.serialize(book), force);
-		} catch (RemoteException e) {
-			return null;
-		}
 	}
 
 	public void setHash(Book book, String hash) {
 		if (myInterface == null) {
 			return;
 		}
-		try {
 			myInterface.setHash(SerializerUtil.serialize(book), hash);
-		} catch (RemoteException e) {
-		}
 	}
 
 	public synchronized ZLTextFixedPosition.WithTimestamp getStoredPosition(long bookId) {
@@ -374,7 +257,6 @@ public class BookCollectionShadow extends AbstractBookCollection<Book> implement
 			return null;
 		}
 
-		try {
 			final PositionWithTimestamp pos = myInterface.getStoredPosition(bookId);
 			if (pos == null) {
 				return null;
@@ -383,17 +265,11 @@ public class BookCollectionShadow extends AbstractBookCollection<Book> implement
 			return new ZLTextFixedPosition.WithTimestamp(
 				pos.ParagraphIndex, pos.ElementIndex, pos.CharIndex, pos.Timestamp
 			);
-		} catch (RemoteException e) {
-			return null;
-		}
 	}
 
 	public synchronized void storePosition(long bookId, ZLTextPosition position) {
 		if (position != null && myInterface != null) {
-			try {
 				myInterface.storePosition(bookId, new PositionWithTimestamp(position));
-			} catch (RemoteException e) {
-			}
 		}
 	}
 
@@ -402,19 +278,12 @@ public class BookCollectionShadow extends AbstractBookCollection<Book> implement
 			return false;
 		}
 
-		try {
 			return myInterface.isHyperlinkVisited(SerializerUtil.serialize(book), linkId);
-		} catch (RemoteException e) {
-			return false;
-		}
 	}
 
 	public synchronized void markHyperlinkAsVisited(Book book, String linkId) {
 		if (myInterface != null) {
-			try {
 				myInterface.markHyperlinkAsVisited(SerializerUtil.serialize(book), linkId);
-			} catch (RemoteException e) {
-			}
 		}
 	}
 
@@ -423,11 +292,7 @@ public class BookCollectionShadow extends AbstractBookCollection<Book> implement
 		if (myInterface == null) {
 			return null;
 		}
-		try {
 			return myInterface.getCoverUrl(book.getPath());
-		} catch (RemoteException e) {
-			return null;
-		}
 	}
 
 	@Override
@@ -435,11 +300,7 @@ public class BookCollectionShadow extends AbstractBookCollection<Book> implement
 		if (myInterface == null) {
 			return null;
 		}
-		try {
 			return myInterface.getDescription(SerializerUtil.serialize(book));
-		} catch (RemoteException e) {
-			return null;
-		}
 	}
 
 	@Override
@@ -455,21 +316,15 @@ public class BookCollectionShadow extends AbstractBookCollection<Book> implement
 
 	public synchronized void saveBookmark(Bookmark bookmark) {
 		if (myInterface != null) {
-			try {
 				bookmark.update(SerializerUtil.deserializeBookmark(
 					myInterface.saveBookmark(SerializerUtil.serialize(bookmark))
 				));
-			} catch (RemoteException e) {
-			}
 		}
 	}
 
 	public synchronized void deleteBookmark(Bookmark bookmark) {
 		if (myInterface != null) {
-			try {
 				myInterface.deleteBookmark(SerializerUtil.serialize(bookmark));
-			} catch (RemoteException e) {
-			}
 		}
 	}
 
@@ -483,10 +338,7 @@ public class BookCollectionShadow extends AbstractBookCollection<Book> implement
 
 	public void purgeBookmarks(List<String> uids) {
 		if (myInterface != null) {
-			try {
 				myInterface.purgeBookmarks(uids);
-			} catch (RemoteException e) {
-			}
 		}
 	}
 
@@ -494,11 +346,7 @@ public class BookCollectionShadow extends AbstractBookCollection<Book> implement
 		if (myInterface == null) {
 			return null;
 		}
-		try {
 			return SerializerUtil.deserializeStyle(myInterface.getHighlightingStyle(styleId));
-		} catch (RemoteException e) {
-			return null;
-		}
 	}
 
 	public List<HighlightingStyle> highlightingStyles() {
@@ -511,11 +359,7 @@ public class BookCollectionShadow extends AbstractBookCollection<Book> implement
 
 	public synchronized void saveHighlightingStyle(HighlightingStyle style) {
 		if (myInterface != null) {
-			try {
 				myInterface.saveHighlightingStyle(SerializerUtil.serialize(style));
-			} catch (RemoteException e) {
-				// ignore
-			}
 		}
 	}
 
@@ -523,30 +367,18 @@ public class BookCollectionShadow extends AbstractBookCollection<Book> implement
 		if (myInterface == null) {
 			return 1;
 		}
-		try {
 			return myInterface.getDefaultHighlightingStyleId();
-		} catch (RemoteException e) {
-			return 1;
-		}
 	}
 
 	public void setDefaultHighlightingStyleId(int styleId) {
 		if (myInterface != null) {
-			try {
 				myInterface.setDefaultHighlightingStyleId(styleId);
-			} catch (RemoteException e) {
-				// ignore
-			}
 		}
 	}
 
 	public synchronized void rescan(String path) {
 		if (myInterface != null) {
-			try {
 				myInterface.rescan(path);
-			} catch (RemoteException e) {
-				// ignore
-			}
 		}
 	}
 
@@ -566,10 +398,7 @@ public class BookCollectionShadow extends AbstractBookCollection<Book> implement
 
 	public synchronized boolean setActiveFormats(List<String> formats) {
 		if (myInterface != null) {
-			try {
 				return myInterface.setActiveFormats(formats);
-			} catch (RemoteException e) {
-			}
 		}
 		return false;
 	}
@@ -590,31 +419,6 @@ public class BookCollectionShadow extends AbstractBookCollection<Book> implement
 			// TODO: report problem
 			return Collections.emptyList();
 		}
-	}
-
-	// method from ServiceConnection interface
-	public void onServiceConnected(ComponentName name, IBinder service) {
-		synchronized (this) {
-			myInterface = LibraryInterface.Stub.asInterface(service);
-		}
-
-		final List<Runnable> actions;
-		synchronized (myOnBindActions) {
-			actions = new ArrayList<Runnable>(myOnBindActions);
-			myOnBindActions.clear();
-		}
-		for (Runnable a : actions) {
-			Config.Instance().runOnConnect(a);
-		}
-
-		if (myContext != null) {
-			myContext.registerReceiver(myReceiver, new IntentFilter(FBReaderIntents.Event.LIBRARY_BOOK));
-			myContext.registerReceiver(myReceiver, new IntentFilter(FBReaderIntents.Event.LIBRARY_BUILD));
-		}
-	}
-
-	// method from ServiceConnection interface
-	public synchronized void onServiceDisconnected(ComponentName name) {
 	}
 
 	public Book createBook(long id, String url, String title, String encoding, String language) {

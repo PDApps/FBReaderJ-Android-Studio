@@ -219,23 +219,23 @@ public class BookCollection extends AbstractBookCollection<DbBook> {
 				final DbBook original = duplicate != null ? myBooksByFile.get(duplicate) : null;
 				if (original != null) {
 					if (new BookMergeHelper(this).merge(original, book)) {
-						fireBookEvent(BookEvent.Updated, original);
+//						fireBookEvent(BookEvent.Updated, original);
 					}
 				} else {
 					myBooksByFile.put(book.File, book);
 					myDuplicateResolver.addFile(book.File);
 					myBooksById.put(book.getId(), book);
-					fireBookEvent(BookEvent.Added, book);
+//					fireBookEvent(BookEvent.Added, book);
 				}
 				return true;
 			} else if (force) {
 				existing.updateFrom(book);
 				switch (existing.save(myDatabase, false)) {
 					case Everything:
-						fireBookEvent(BookEvent.Updated, existing);
+//						fireBookEvent(BookEvent.Updated, existing);
 						return true;
 					case Progress:
-						fireBookEvent(BookEvent.ProgressUpdated, existing);
+//						fireBookEvent(BookEvent.ProgressUpdated, existing);
 						return true;
 				}
 			}
@@ -258,7 +258,7 @@ public class BookCollection extends AbstractBookCollection<DbBook> {
 			}
 			myDatabase.deleteBook(book.getId());
 		}
-		fireBookEvent(BookEvent.Removed, book);
+//		fireBookEvent(BookEvent.Removed, book);
 	}
 
 	public boolean canRemoveBook(DbBook book, boolean deleteFromDisk) {
@@ -441,17 +441,17 @@ public class BookCollection extends AbstractBookCollection<DbBook> {
 
 	public void addToRecentlyOpened(DbBook book) {
 		myDatabase.addBookHistoryEvent(book.getId(), BooksDatabase.HistoryEvent.Opened);
-		fireBookEvent(BookEvent.Opened, book);
+//		fireBookEvent(BookEvent.Opened, book);
 	}
 
 	public void removeFromRecentlyOpened(DbBook book) {
 		myDatabase.removeBookHistoryEvents(book.getId(), BooksDatabase.HistoryEvent.Opened);
-		fireBookEvent(BookEvent.Updated, book);
+//		fireBookEvent(BookEvent.Updated, book);
 	}
 
 	private void setStatus(Status status) {
 		myStatus = status;
-		fireBuildEvent(status);
+//		fireBuildEvent(status);
 	}
 
 	public synchronized void startBuild() {
@@ -525,7 +525,7 @@ public class BookCollection extends AbstractBookCollection<DbBook> {
 					myDuplicateResolver.removeFile(f);
 					if (book != null) {
 						myBooksById.remove(book.getId());
-						fireBookEvent(BookEvent.Removed, book);
+//						fireBookEvent(BookEvent.Removed, book);
 					}
 				}
 			}
@@ -724,7 +724,7 @@ public class BookCollection extends AbstractBookCollection<DbBook> {
 				final DbBook book = getBookById(bookmark.BookId);
 				if (book != null) {
 					book.HasBookmark = true;
-					fireBookEvent(BookEvent.BookmarksUpdated, book);
+//					fireBookEvent(BookEvent.BookmarksUpdated, book);
 				}
 			}
 		}
@@ -737,7 +737,7 @@ public class BookCollection extends AbstractBookCollection<DbBook> {
 				final DbBook book = getBookById(bookmark.BookId);
 				if (book != null) {
 					book.HasBookmark = myDatabase.hasVisibleBookmark(bookmark.BookId);
-					fireBookEvent(BookEvent.BookmarksUpdated, book);
+//					fireBookEvent(BookEvent.BookmarksUpdated, book);
 				}
 			}
 		}
@@ -790,7 +790,7 @@ public class BookCollection extends AbstractBookCollection<DbBook> {
 	public synchronized void saveHighlightingStyle(HighlightingStyle style) {
 		myDatabase.saveStyle(style);
 		myStyles.clear();
-		fireBookEvent(BookEvent.BookmarkStyleChanged, null);
+//		fireBookEvent(BookEvent.BookmarkStyleChanged, null);
 	}
 
 	private final static String DEFAULT_STYLE_ID_KEY = "defaultStyle";

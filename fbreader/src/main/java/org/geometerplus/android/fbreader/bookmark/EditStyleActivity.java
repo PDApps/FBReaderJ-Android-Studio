@@ -67,13 +67,6 @@ public class EditStyleActivity extends PreferenceActivity {
 		});
 	}
 
-	@Override
-	protected void onDestroy() {
-		myCollection.unbind();
-
-		super.onDestroy();
-	}
-
 	private class NamePreference extends ZLStringPreference {
 		NamePreference() {
 			super(EditStyleActivity.this, myRootResource, "name");

@@ -22,6 +22,7 @@ package org.geometerplus.android.fbreader.libraryService;
 import java.util.*;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.IBinder;
@@ -42,63 +43,40 @@ import org.geometerplus.android.fbreader.api.FBReaderIntents;
 import org.geometerplus.android.fbreader.httpd.DataService;
 import org.geometerplus.android.fbreader.httpd.DataUtil;
 
-public class LibraryService extends Service {
+public class LibraryService {
 	private static SQLiteBooksDatabase ourDatabase;
 	private static final Object ourDatabaseLock = new Object();
+	private Context mContext;
 
 	final DataService.Connection DataConnection = new DataService.Connection();
 
-	private static final class Observer extends FileObserver {
-		private static final int MASK =
-			MOVE_SELF | MOVED_TO | MOVED_FROM | DELETE_SELF | DELETE | CLOSE_WRITE | ATTRIB;
-
-		private final String myPrefix;
-		private final BookCollection myCollection;
-
-		public Observer(String path, BookCollection collection) {
-			super(path, MASK);
-			myPrefix = path + '/';
-			myCollection = collection;
-		}
-
-		@Override
-		public void onEvent(int event, String path) {
-			event = event & ALL_EVENTS;
-			System.err.println("Event " + event + " on " + path);
-			switch (event) {
-				case MOVE_SELF:
-					// TODO: File(path) removed; stop watching (?)
-					break;
-				case MOVED_TO:
-					myCollection.rescan(myPrefix + path);
-					break;
-				case MOVED_FROM:
-				case DELETE:
-					myCollection.rescan(myPrefix + path);
-					break;
-				case DELETE_SELF:
-					// TODO: File(path) removed; watching is stopped automatically (?)
-					break;
-				case CLOSE_WRITE:
-				case ATTRIB:
-					myCollection.rescan(myPrefix + path);
-					break;
-				default:
-					System.err.println("Unexpected event " + event + " on " + myPrefix + path);
-					break;
-			}
-		}
+	public static LibraryImplementation getImplementation() {
+		return myLibrary;
 	}
 
-	public final class LibraryImplementation extends LibraryInterface.Stub {
+	public LibraryService(Context context) {
+		mContext = context;
+		ourDatabase = new SQLiteBooksDatabase(context);
+		myLibrary = new LibraryImplementation(ourDatabase);
+		context.bindService(
+				new Intent(context, DataService.class),
+				DataConnection,
+				DataService.BIND_AUTO_CREATE
+		);
+	}
+
+	public static void init(Context context) {
+		new LibraryService(context);
+	}
+
+	public final class LibraryImplementation {
 		private final BooksDatabase myDatabase;
-		private final List<FileObserver> myFileObservers = new LinkedList<FileObserver>();
 		private BookCollection myCollection;
 
 		LibraryImplementation(BooksDatabase db) {
 			myDatabase = db;
 			myCollection = new BookCollection(
-				Paths.systemInfo(LibraryService.this), myDatabase, Paths.bookPath()
+				Paths.systemInfo(mContext), myDatabase, Paths.bookPath()
 			);
 			reset(true);
 		}
@@ -120,39 +98,11 @@ public class LibraryService extends Service {
 				return;
 			}
 
-			deactivate();
-			myFileObservers.clear();
-
 			myCollection = new BookCollection(
-				Paths.systemInfo(LibraryService.this), myDatabase, bookDirectories
+				Paths.systemInfo(mContext), myDatabase, bookDirectories
 			);
-			for (String dir : bookDirectories) {
-				final Observer observer = new Observer(dir, myCollection);
-				observer.startWatching();
-				myFileObservers.add(observer);
-			}
 
-			myCollection.addListener(new BookCollection.Listener<DbBook>() {
-				public void onBookEvent(BookEvent event, DbBook book) {
-					final Intent intent = new Intent(FBReaderIntents.Event.LIBRARY_BOOK);
-					intent.putExtra("type", event.toString());
-					intent.putExtra("book", SerializerUtil.serialize(book));
-					sendBroadcast(intent);
-				}
-
-				public void onBuildEvent(BookCollection.Status status) {
-					final Intent intent = new Intent(FBReaderIntents.Event.LIBRARY_BUILD);
-					intent.putExtra("type", status.toString());
-					sendBroadcast(intent);
-				}
-			});
 			myCollection.startBuild();
-		}
-
-		public void deactivate() {
-			for (FileObserver observer : myFileObservers) {
-				observer.stopWatching();
-			}
 		}
 
 		public String status() {
@@ -277,27 +227,22 @@ public class LibraryService extends Service {
 			));
 		}
 
-		@Override
 		public boolean isHyperlinkVisited(String book, String linkId) {
 			return myCollection.isHyperlinkVisited(SerializerUtil.deserializeBook(book, myCollection), linkId);
 		}
 
-		@Override
 		public void markHyperlinkAsVisited(String book, String linkId) {
 			myCollection.markHyperlinkAsVisited(SerializerUtil.deserializeBook(book, myCollection), linkId);
 		}
 
-		@Override
 		public String getCoverUrl(String path) {
 			return DataUtil.buildUrl(DataConnection, "cover", path);
 		}
 
-		@Override
 		public String getDescription(String book) {
 			return BookUtil.getAnnotation(SerializerUtil.deserializeBook(book, myCollection), myCollection.PluginCollection);
 		}
 
-		@Override
 		public Bitmap getCover(final String bookString, final int maxWidth, final int maxHeight, boolean[] delayed) {
 			// this method kept for compatibility
 			delayed[0] = false;
@@ -404,49 +349,5 @@ public class LibraryService extends Service {
 		}
 	}
 
-	private volatile LibraryImplementation myLibrary;
-
-	@Override
-	public void onStart(Intent intent, int startId) {
-		onStartCommand(intent, 0, startId);
-	}
-
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		return START_STICKY;
-	}
-
-	@Override
-	public IBinder onBind(Intent intent) {
-		return myLibrary;
-	}
-
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		synchronized (ourDatabaseLock) {
-			if (ourDatabase == null) {
-				ourDatabase = new SQLiteBooksDatabase(LibraryService.this);
-			}
-		}
-		myLibrary = new LibraryImplementation(ourDatabase);
-
-		bindService(
-			new Intent(this, DataService.class),
-			DataConnection,
-			DataService.BIND_AUTO_CREATE
-		);
-	}
-
-	@Override
-	public void onDestroy() {
-		unbindService(DataConnection);
-
-		if (myLibrary != null) {
-			final LibraryImplementation l = myLibrary;
-			myLibrary = null;
-			l.deactivate();
-		}
-		super.onDestroy();
-	}
+	private static volatile LibraryImplementation myLibrary;
 }

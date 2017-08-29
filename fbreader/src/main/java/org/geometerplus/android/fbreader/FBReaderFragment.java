@@ -26,6 +26,7 @@ import org.geometerplus.android.fbreader.api.MenuNode;
 import org.geometerplus.android.fbreader.api.PluginApi;
 import org.geometerplus.android.fbreader.httpd.DataService;
 import org.geometerplus.android.fbreader.libraryService.BookCollectionShadow;
+import org.geometerplus.android.fbreader.libraryService.LibraryService;
 import org.geometerplus.android.util.DeviceType;
 import org.geometerplus.android.util.UIMessageUtil;
 import org.geometerplus.android.util.UIUtil;
@@ -77,12 +78,10 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
     private ZLAndroidWidget myMainView;
 
     private volatile boolean myShowStatusBarFlag;
-    private String myMenuLanguage;
 
     final DataService.Connection DataConnection = new DataService.Connection();
 
     volatile boolean IsPaused = false;
-    private volatile long myResumeTimestamp;
     volatile Runnable OnResumeAction = null;
 
     private Intent myCancelIntent = null;
@@ -197,7 +196,7 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
         final ZLAndroidLibrary zlibrary = getZLibrary();
         myShowStatusBarFlag = zlibrary.ShowStatusBarOption.getValue();
 
-
+        LibraryService.init(getActivity());
         View mainLayout = inflater.inflate(R.layout.main, null);
         myRootView = (RelativeLayout) mainLayout.findViewById(R.id.root_view);
         myMainView = (ZLAndroidWidget) mainLayout.findViewById(R.id.main_view);
@@ -288,25 +287,6 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        setStatusBarVisibility(true);
-        setupMenu(menu);
-        super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
-    public void onOptionsMenuClosed(Menu menu) {
-        super.onOptionsMenuClosed(menu);
-        setStatusBarVisibility(false);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        setStatusBarVisibility(false);
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public void onStart() {
         super.onStart();
 
@@ -373,7 +353,6 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
 
         getActivity().registerReceiver(myBatteryInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         IsPaused = false;
-        myResumeTimestamp = System.currentTimeMillis();
         if (OnResumeAction != null) {
             final Runnable action = OnResumeAction;
             OnResumeAction = null;
@@ -437,7 +416,6 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
 
     @Override
     public void onDestroyView() {
-        getCollection().unbind();
         getActivity().unbindService(DataConnection);
         super.onDestroyView();
     }
@@ -497,75 +475,6 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
         myFBReaderApp.runCancelAction(type, bookmark);
     }
 
-    private Menu addSubmenu(Menu menu, String id) {
-        return menu.addSubMenu(ZLResource.resource("menu").getResource(id).getValue());
-    }
-
-    private void addMenuItem(Menu menu, String actionId, Integer iconId, String name) {
-        if (name == null) {
-            name = ZLResource.resource("menu").getResource(actionId).getValue();
-        }
-        final MenuItem menuItem = menu.add(name);
-        if (iconId != null) {
-            menuItem.setIcon(iconId);
-        }
-        menuItem.setOnMenuItemClickListener(myMenuListener);
-        myMenuItemMap.put(menuItem, actionId);
-    }
-
-    private void addMenuItem(Menu menu, String actionId, String name) {
-        addMenuItem(menu, actionId, null, name);
-    }
-
-    private void addMenuItem(Menu menu, String actionId, int iconId) {
-        addMenuItem(menu, actionId, iconId, null);
-    }
-
-    private void addMenuItem(Menu menu, String actionId) {
-        addMenuItem(menu, actionId, null, null);
-    }
-
-    private void fillMenu(Menu menu, List<MenuNode> nodes) {
-        for (MenuNode n : nodes) {
-            if (n instanceof MenuNode.Item) {
-                final Integer iconId = ((MenuNode.Item) n).IconId;
-                if (iconId != null) {
-                    addMenuItem(menu, n.Code, iconId);
-                } else {
-                    addMenuItem(menu, n.Code);
-                }
-            } else /* if (n instanceof MenuNode.Submenu) */ {
-                final Menu submenu = addSubmenu(menu, n.Code);
-                fillMenu(submenu, ((MenuNode.Submenu) n).Children);
-            }
-        }
-    }
-
-    private void setupMenu(Menu menu) {
-        final String menuLanguage = ZLResource.getLanguageOption().getValue();
-        if (menuLanguage.equals(myMenuLanguage)) {
-            return;
-        }
-        myMenuLanguage = menuLanguage;
-
-        menu.clear();
-        fillMenu(menu, MenuData.topLevelNodes());
-        synchronized (myPluginActions) {
-            int index = 0;
-            for (PluginApi.ActionInfo info : myPluginActions) {
-                if (info instanceof PluginApi.MenuActionInfo) {
-                    addMenuItem(
-                            menu,
-                            PLUGIN_ACTION_PREFIX + index++,
-                            ((PluginApi.MenuActionInfo) info).MenuItemName
-                    );
-                }
-            }
-        }
-
-        refresh();
-    }
-
     @Override
     public void onPluginNotFound(final Book book) {
         final BookCollectionShadow collection = getCollection();
@@ -581,17 +490,6 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
         });
     }
 
-    private void setStatusBarVisibility(boolean visible) {
-        final ZLAndroidLibrary zlibrary = getZLibrary();
-        if (DeviceType.Instance() != DeviceType.KINDLE_FIRE_1ST_GENERATION && !myShowStatusBarFlag) {
-            if (visible) {
-                getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-            } else {
-                getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-            }
-        }
-    }
-
     @Override
     public boolean isPaused() {
         return IsPaused;
@@ -601,16 +499,6 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
     public void setOnResumeAction(Runnable onResumeAction) {
         OnResumeAction = onResumeAction;
     }
-
-//    @Override
-//    public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        return (myMainView != null && myMainView.onKeyDown(keyCode, event)) || super.onKeyDown(keyCode, event);
-//    }
-//
-//    @Override
-//    public boolean onKeyUp(int keyCode, KeyEvent event) {
-//        return (myMainView != null && myMainView.onKeyUp(keyCode, event)) || super.onKeyUp(keyCode, event);
-//    }
 
     private void setButtonLight(boolean enabled) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {

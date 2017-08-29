@@ -74,30 +74,6 @@ public final class FBReaderApp extends ZLApplication {
 
 		Collection = collection;
 
-		collection.addListener(new IBookCollection.Listener<Book>() {
-			public void onBookEvent(BookEvent event, Book book) {
-				switch (event) {
-					case BookmarkStyleChanged:
-					case BookmarksUpdated:
-						if (Model != null && (book == null || collection.sameBook(book, Model.Book))) {
-							if (BookTextView.getModel() != null) {
-								setBookmarkHighlightings(BookTextView, null);
-							}
-							if (FootnoteView.getModel() != null && myFootnoteModelId != null) {
-								setBookmarkHighlightings(FootnoteView, myFootnoteModelId);
-							}
-						}
-						break;
-					case Updated:
-						onBookUpdated(book);
-						break;
-				}
-			}
-
-			public void onBuildEvent(IBookCollection.Status status) {
-			}
-		});
-
 		addAction(ActionCode.INCREASE_FONT, new ChangeFontSizeAction(this, +2));
 		addAction(ActionCode.DECREASE_FONT, new ChangeFontSizeAction(this, -2));
 

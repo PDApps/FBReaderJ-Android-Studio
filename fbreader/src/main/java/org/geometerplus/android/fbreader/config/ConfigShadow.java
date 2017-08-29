@@ -30,10 +30,9 @@ import org.geometerplus.zlibrary.core.options.Config;
 
 import org.geometerplus.android.fbreader.api.FBReaderIntents;
 
-public final class ConfigShadow extends Config implements ServiceConnection {
+public final class ConfigShadow extends Config {
 	private final Context myContext;
-	private volatile ConfigInterface myInterface;
-	private final List<Runnable> myDeferredActions = new LinkedList<Runnable>();
+	private volatile SQLiteConfig mSqLiteConfig;
 
 	private final BroadcastReceiver myReceiver = new BroadcastReceiver() {
 		public void onReceive(Context context, Intent intent) {
@@ -51,60 +50,41 @@ public final class ConfigShadow extends Config implements ServiceConnection {
 
 	public ConfigShadow(Context context) {
 		myContext = context;
-		context.bindService(
-			FBReaderIntents.internalIntent(FBReaderIntents.Action.CONFIG_SERVICE),
-			this,
-			Service.BIND_AUTO_CREATE
-		);
+		mSqLiteConfig = new SQLiteConfig(context);
 	}
 
 	@Override
 	public boolean isInitialized() {
-		return myInterface != null;
+		return mSqLiteConfig != null;
 	}
 
 	@Override
 	public void runOnConnect(Runnable runnable) {
-		if (myInterface != null) {
+		if (mSqLiteConfig != null) {
 			runnable.run();
-		} else {
-			synchronized (myDeferredActions) {
-				myDeferredActions.add(runnable);
-			}
 		}
 	}
 
 	@Override
 	public List<String> listGroups() {
-		if (myInterface == null) {
+		if (mSqLiteConfig == null) {
 			return Collections.emptyList();
 		}
-		try {
-			return myInterface.listGroups();
-		} catch (RemoteException e) {
-			return Collections.emptyList();
-		}
+			return mSqLiteConfig.listGroups();
 	}
 
 	@Override
 	public List<String> listNames(String group) {
-		if (myInterface == null) {
+		if (mSqLiteConfig == null) {
 			return Collections.emptyList();
 		}
-		try {
-			return myInterface.listNames(group);
-		} catch (RemoteException e) {
-			return Collections.emptyList();
-		}
+			return mSqLiteConfig.listNames(group);
 	}
 
 	@Override
 	public void removeGroup(String name) {
-		if (myInterface != null) {
-			try {
-				myInterface.removeGroup(name);
-			} catch (RemoteException e) {
-			}
+		if (mSqLiteConfig != null) {
+				mSqLiteConfig.removeGroup(name);
 		}
 	}
 
@@ -130,44 +110,33 @@ public final class ConfigShadow extends Config implements ServiceConnection {
 
 	@Override
 	protected String getValueInternal(String group, String name) throws NotAvailableException {
-		if (myInterface == null) {
+		if (mSqLiteConfig == null) {
 			throw new NotAvailableException("Config is not initialized for " + group + ":" + name);
 		}
-		try {
-			return myInterface.getValue(group, name);
-		} catch (RemoteException e) {
-			throw new NotAvailableException("RemoteException for " + group + ":" + name);
-		}
+			return mSqLiteConfig.getValue(group, name);
 	}
 
 	@Override
 	protected void setValueInternal(String group, String name, String value) {
-		if (myInterface != null) {
-			try {
-				myInterface.setValue(group, name, value);
-			} catch (RemoteException e) {
-			}
+		if (mSqLiteConfig != null) {
+				mSqLiteConfig.setValue(group, name, value);
 		}
 	}
 
 	@Override
 	protected void unsetValueInternal(String group, String name) {
-		if (myInterface != null) {
-			try {
-				myInterface.unsetValue(group, name);
-			} catch (RemoteException e) {
-			}
+		if (mSqLiteConfig != null) {
+				mSqLiteConfig.unsetValue(group, name);
 		}
 	}
 
 	@Override
 	protected Map<String,String> requestAllValuesForGroupInternal(String group) throws NotAvailableException {
-		if (myInterface == null) {
+		if (mSqLiteConfig == null) {
 			throw new NotAvailableException("Config is not initialized for " + group);
 		}
-		try {
 			final Map<String,String> values = new HashMap<String,String>();
-			for (String pair : myInterface.requestAllValuesForGroup(group)) {
+			for (String pair : mSqLiteConfig.requestAllValuesForGroup(group)) {
 				final String[] split = pair.split("\000");
 				switch (split.length) {
 					case 1:
@@ -179,32 +148,5 @@ public final class ConfigShadow extends Config implements ServiceConnection {
 				}
 			}
 			return values;
-		} catch (RemoteException e) {
-			throw new NotAvailableException("RemoteException for " + group);
-		}
-	}
-
-	// method from ServiceConnection interface
-	public void onServiceConnected(ComponentName name, IBinder service) {
-		synchronized (this) {
-			myInterface = ConfigInterface.Stub.asInterface(service);
-			myContext.registerReceiver(
-				myReceiver, new IntentFilter(FBReaderIntents.Event.CONFIG_OPTION_CHANGE)
-			);
-		}
-
-		final List<Runnable> actions;
-		synchronized (myDeferredActions) {
-			actions = new ArrayList<Runnable>(myDeferredActions);
-			myDeferredActions.clear();
-		}
-		for (Runnable a : actions) {
-			a.run();
-		}
-	}
-
-	// method from ServiceConnection interface
-	public synchronized void onServiceDisconnected(ComponentName name) {
-		myContext.unregisterReceiver(myReceiver);
 	}
 }

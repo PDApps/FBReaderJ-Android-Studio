@@ -109,18 +109,6 @@ public class PreferenceActivity extends ZLPreferenceActivity {
 		final String decimalSeparator =
 			String.valueOf(new DecimalFormatSymbols(Locale.getDefault()).getDecimalSeparator());
 
-		final Screen directoriesScreen = createPreferenceScreen("directories");
-		final Runnable libraryUpdater = new Runnable() {
-			public void run() {
-				final BookCollectionShadow bookCollection = new BookCollectionShadow();
-				bookCollection.bindToService(PreferenceActivity.this, new Runnable() {
-					public void run() {
-						bookCollection.reset(false);
-						bookCollection.unbind();
-					}
-				});
-			}
-		};
 		final PreferenceSet fontReloader = new PreferenceSet.Reloader();
 
 		final Screen appearanceScreen = createPreferenceScreen("appearance");
