@@ -237,7 +237,6 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
         myFBReaderApp.addAction(ActionCode.SHOW_BOOK_INFO, new ShowBookInfoAction(activity, myFBReaderApp));
         myFBReaderApp.addAction(ActionCode.SHOW_TOC, new ShowTOCAction(activity, myFBReaderApp));
 
-        myFBReaderApp.addAction(ActionCode.SHOW_MENU, new ShowMenuAction(activity, myFBReaderApp));
         myFBReaderApp.addAction(ActionCode.SHOW_NAVIGATION, new ShowNavigationAction(activity, myFBReaderApp));
         myFBReaderApp.addAction(ActionCode.SEARCH, new SearchAction(activity, myFBReaderApp));
         myFBReaderApp.addAction(ActionCode.SHARE_BOOK, new ShareBookAction(activity, myFBReaderApp));
