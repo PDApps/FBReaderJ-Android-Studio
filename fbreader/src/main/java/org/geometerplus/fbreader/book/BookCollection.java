@@ -605,13 +605,7 @@ public class BookCollection extends AbstractBookCollection<DbBook> {
 			file.setCached(false);
 		}
 
-		// Step 3: add help file
-		final ZLFile helpFile = BookUtil.getHelpFile();
-		DbBook helpBook = savedBooksByFileId.get(fileInfos.getId(helpFile));
-		if (helpBook == null) {
-			helpBook = getBookByFile(helpFile);
-		}
-		saveBook(helpBook);
+		// removed Step 3: add help file
 
 		// Step 4: save changes into database
 		fileInfos.save();

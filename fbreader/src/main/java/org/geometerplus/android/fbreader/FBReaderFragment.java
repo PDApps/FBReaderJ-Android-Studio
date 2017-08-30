@@ -2,17 +2,14 @@ package org.geometerplus.android.fbreader;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,13 +18,10 @@ import android.widget.RelativeLayout;
 
 import org.geometerplus.android.fbreader.api.ApiListener;
 import org.geometerplus.android.fbreader.api.ApiServerImplementation;
-import org.geometerplus.android.fbreader.api.FBReaderIntents;
-import org.geometerplus.android.fbreader.api.MenuNode;
 import org.geometerplus.android.fbreader.api.PluginApi;
 import org.geometerplus.android.fbreader.httpd.DataService;
 import org.geometerplus.android.fbreader.libraryService.BookCollectionShadow;
 import org.geometerplus.android.fbreader.libraryService.LibraryService;
-import org.geometerplus.android.util.DeviceType;
 import org.geometerplus.android.util.UIMessageUtil;
 import org.geometerplus.android.util.UIUtil;
 import org.geometerplus.fbreader.Paths;
@@ -37,13 +31,11 @@ import org.geometerplus.fbreader.book.Bookmark;
 import org.geometerplus.fbreader.bookmodel.BookModel;
 import org.geometerplus.fbreader.fbreader.ActionCode;
 import org.geometerplus.fbreader.fbreader.FBReaderApp;
-import org.geometerplus.fbreader.fbreader.options.CancelMenuHelper;
 import org.geometerplus.fbreader.fbreader.options.ColorProfile;
 import org.geometerplus.zlibrary.core.application.ZLApplicationWindow;
 import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 import org.geometerplus.zlibrary.core.library.ZLibrary;
 import org.geometerplus.zlibrary.core.options.Config;
-import org.geometerplus.zlibrary.core.resources.ZLResource;
 import org.geometerplus.zlibrary.core.view.ZLViewWidget;
 import org.geometerplus.zlibrary.text.view.ZLTextRegion;
 import org.geometerplus.zlibrary.ui.android.R;
@@ -52,15 +44,12 @@ import org.geometerplus.zlibrary.ui.android.library.ZLAndroidLibrary;
 import org.geometerplus.zlibrary.ui.android.view.AndroidFontUtil;
 import org.geometerplus.zlibrary.ui.android.view.ZLAndroidWidget;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static android.app.Activity.RESULT_FIRST_USER;
 import static android.app.Activity.RESULT_OK;
 
 /**
@@ -78,8 +67,6 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
 
     volatile boolean IsPaused = false;
     volatile Runnable OnResumeAction = null;
-
-    private Intent myOpenBookIntent = null;
 
     private static final String PLUGIN_ACTION_PREFIX = "___";
     private final List<PluginApi.ActionInfo> myPluginActions =
@@ -112,11 +99,10 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
         super.onActivityCreated(savedInstanceState);
     }
 
-    private synchronized void openBook() {
+    protected synchronized void onBookReady(ZLFile zlFile) {
 //        final Bookmark bookmark = FBReaderIntents.getBookmarkExtra(intent);
         final Bookmark bookmark = null;
         if (myBook == null) {
-            ZLFile zlFile = getZLFile();
             if (zlFile != null) {
                 myBook = createBookForFile(zlFile);
             }
@@ -140,8 +126,6 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
             }
         });
     }
-
-    protected abstract ZLFile getZLFile();
 
     protected Book createBookForFile(ZLFile file) {
         if (file == null) {
@@ -248,7 +232,6 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
         myFBReaderApp.addAction(ActionCode.SWITCH_TO_DAY_PROFILE, new SwitchProfileAction(activity, myFBReaderApp, ColorProfile.DAY));
         myFBReaderApp.addAction(ActionCode.SWITCH_TO_NIGHT_PROFILE, new SwitchProfileAction(activity, myFBReaderApp, ColorProfile.NIGHT));
 
-        myOpenBookIntent = getActivity().getIntent();
         return mainLayout;
     }
 
@@ -326,15 +309,7 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
         }
 
         SetScreenOrientationAction.setOrientation(getActivity(), getZLibrary().getOrientationOption().getValue());
-        if (myOpenBookIntent != null) {
-            final Intent intent = myOpenBookIntent;
-            myOpenBookIntent = null;
-            getCollection().bindToService(getActivity(), new Runnable() {
-                public void run() {
-                    openBook();
-                }
-            });
-        } else if (myFBReaderApp.Model == null && myFBReaderApp.ExternalBook != null) {
+        if (myFBReaderApp.Model == null && myFBReaderApp.ExternalBook != null) {
             getCollection().bindToService(getActivity(), new Runnable() {
                 public void run() {
                     myFBReaderApp.openBook(myFBReaderApp.ExternalBook, null, null);
