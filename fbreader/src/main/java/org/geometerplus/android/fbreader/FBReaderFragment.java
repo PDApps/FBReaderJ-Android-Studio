@@ -68,23 +68,17 @@ import static android.app.Activity.RESULT_OK;
  */
 
 public abstract class FBReaderFragment extends FBReaderBaseFragment implements ZLApplicationWindow {
-    public static final int RESULT_DO_NOTHING = RESULT_FIRST_USER;
-    public static final int RESULT_REPAINT = RESULT_FIRST_USER + 1;
-
     private FBReaderApp myFBReaderApp;
     protected volatile Book myBook;
 
     private RelativeLayout myRootView;
     private ZLAndroidWidget myMainView;
 
-    private volatile boolean myShowStatusBarFlag;
-
     final DataService.Connection DataConnection = new DataService.Connection();
 
     volatile boolean IsPaused = false;
     volatile Runnable OnResumeAction = null;
 
-    private Intent myCancelIntent = null;
     private Intent myOpenBookIntent = null;
 
     private static final String PLUGIN_ACTION_PREFIX = "___";
@@ -118,13 +112,9 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
         super.onActivityCreated(savedInstanceState);
     }
 
-    private synchronized void openBook(Intent intent, final Runnable action, boolean force) {
-        if (!force && myBook != null) {
-            return;
-        }
-
-        myBook = FBReaderIntents.getBookExtra(intent, myFBReaderApp.Collection);
-        final Bookmark bookmark = FBReaderIntents.getBookmarkExtra(intent);
+    private synchronized void openBook() {
+//        final Bookmark bookmark = FBReaderIntents.getBookmarkExtra(intent);
+        final Bookmark bookmark = null;
         if (myBook == null) {
             ZLFile zlFile = getZLFile();
             if (zlFile != null) {
@@ -145,7 +135,7 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
         }
         Config.Instance().runOnConnect(new Runnable() {
             public void run() {
-                myFBReaderApp.openBook(myBook, bookmark, action);
+                myFBReaderApp.openBook(myBook, bookmark, null);
                 AndroidFontUtil.clearFontCache();
             }
         });
@@ -194,7 +184,6 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
         });
 
         final ZLAndroidLibrary zlibrary = getZLibrary();
-        myShowStatusBarFlag = zlibrary.ShowStatusBarOption.getValue();
 
         LibraryService.init(getActivity());
         View mainLayout = inflater.inflate(R.layout.main, null);
@@ -259,25 +248,7 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
         myFBReaderApp.addAction(ActionCode.SWITCH_TO_DAY_PROFILE, new SwitchProfileAction(activity, myFBReaderApp, ColorProfile.DAY));
         myFBReaderApp.addAction(ActionCode.SWITCH_TO_NIGHT_PROFILE, new SwitchProfileAction(activity, myFBReaderApp, ColorProfile.NIGHT));
 
-        final Intent intent = getActivity().getIntent();
-        final String action = intent.getAction();
-
-        myOpenBookIntent = intent;
-        if ((intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == 0) {
-            if (FBReaderIntents.Action.CLOSE.equals(action)) {
-                myCancelIntent = intent;
-                myOpenBookIntent = null;
-            } else if (FBReaderIntents.Action.PLUGIN_CRASH.equals(action)) {
-                myFBReaderApp.ExternalBook = null;
-                myOpenBookIntent = null;
-                getCollection().bindToService(getActivity(), new Runnable() {
-                    public void run() {
-                        myFBReaderApp.openBook(null, null, null);
-                    }
-                });
-            }
-        }
-
+        myOpenBookIntent = getActivity().getIntent();
         return mainLayout;
     }
 
@@ -355,21 +326,12 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
         }
 
         SetScreenOrientationAction.setOrientation(getActivity(), getZLibrary().getOrientationOption().getValue());
-        if (myCancelIntent != null) {
-            final Intent intent = myCancelIntent;
-            myCancelIntent = null;
-            getCollection().bindToService(getActivity(), new Runnable() {
-                public void run() {
-                    runCancelAction(intent);
-                }
-            });
-            return;
-        } else if (myOpenBookIntent != null) {
+        if (myOpenBookIntent != null) {
             final Intent intent = myOpenBookIntent;
             myOpenBookIntent = null;
             getCollection().bindToService(getActivity(), new Runnable() {
                 public void run() {
-                    openBook(intent, null, true);
+                    openBook();
                 }
             });
         } else if (myFBReaderApp.Model == null && myFBReaderApp.ExternalBook != null) {
@@ -424,50 +386,6 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
     private void onPreferencesUpdate(Book book) {
         AndroidFontUtil.clearFontCache();
         myFBReaderApp.onBookUpdated(book);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            default:
-                super.onActivityResult(requestCode, resultCode, data);
-                break;
-            case REQUEST_PREFERENCES:
-                if (resultCode != RESULT_DO_NOTHING && data != null) {
-                    final Book book = FBReaderIntents.getBookExtra(data, myFBReaderApp.Collection);
-                    if (book != null) {
-                        getCollection().bindToService(getActivity(), new Runnable() {
-                            public void run() {
-                                onPreferencesUpdate(book);
-                            }
-                        });
-                    }
-                }
-                break;
-            case REQUEST_CANCEL_MENU:
-                runCancelAction(data);
-                break;
-        }
-    }
-
-    private void runCancelAction(Intent intent) {
-        final CancelMenuHelper.ActionType type;
-        try {
-            type = CancelMenuHelper.ActionType.valueOf(
-                    intent.getStringExtra(FBReaderIntents.Key.TYPE)
-            );
-        } catch (Exception e) {
-            // invalid (or null) type value
-            return;
-        }
-        Bookmark bookmark = null;
-        if (type == CancelMenuHelper.ActionType.returnTo) {
-            bookmark = FBReaderIntents.getBookmarkExtra(intent);
-            if (bookmark == null) {
-                return;
-            }
-        }
-        myFBReaderApp.runCancelAction(type, bookmark);
     }
 
     @Override
