@@ -183,14 +183,6 @@ public abstract class ZLApplication {
 		return false;
 	}
 
-	public boolean closeWindow() {
-		onWindowClosing();
-		if (myWindow != null) {
-			myWindow.close();
-		}
-		return true;
-	}
-
 	public void onWindowClosing() {
 	}
 

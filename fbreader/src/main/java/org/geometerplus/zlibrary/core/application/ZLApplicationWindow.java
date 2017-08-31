@@ -31,7 +31,5 @@ public interface ZLApplicationWindow {
 
 	ZLViewWidget getViewWidget();
 
-	void close();
-
 	int getBatteryLevel();
 }

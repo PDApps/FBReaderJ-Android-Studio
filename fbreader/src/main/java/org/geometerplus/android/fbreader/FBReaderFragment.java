@@ -441,11 +441,6 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
     }
 
     @Override
-    public void close() {
-        getActivity().finish();
-    }
-
-    @Override
     public ZLViewWidget getViewWidget() {
         return myMainView;
     }

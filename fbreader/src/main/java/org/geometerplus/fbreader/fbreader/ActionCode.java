@@ -50,12 +50,8 @@ public interface ActionCode {
 
 	String VOLUME_KEY_SCROLL_FORWARD = "volumeKeyScrollForward";
 	String VOLUME_KEY_SCROLL_BACK = "volumeKeyScrollBackward";
-	String SHOW_MENU = "menu";
 	String SHOW_NAVIGATION = "navigate";
 
-	String GO_BACK = "goBack";
-	String EXIT = "exit";
-	String SHOW_CANCEL_MENU = "cancelMenu";
 
 	String SET_SCREEN_ORIENTATION_SYSTEM = "screenOrientationSystem";
 	String SET_SCREEN_ORIENTATION_SENSOR = "screenOrientationSensor";

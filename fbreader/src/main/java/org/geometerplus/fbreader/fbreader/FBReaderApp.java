@@ -94,8 +94,6 @@ public final class FBReaderApp extends ZLApplication {
 		addAction(ActionCode.VOLUME_KEY_SCROLL_FORWARD, new VolumeKeyTurnPageAction(this, true));
 		addAction(ActionCode.VOLUME_KEY_SCROLL_BACK, new VolumeKeyTurnPageAction(this, false));
 
-		addAction(ActionCode.EXIT, new ExitAction(this));
-
 		BookTextView = new FBView(this);
 		FootnoteView = new FBView(this);
 
@@ -531,9 +529,6 @@ public final class FBReaderApp extends ZLApplication {
 			case returnTo:
 				Collection.deleteBookmark(bookmark);
 				gotoBookmark(bookmark, true);
-				break;
-			case close:
-				closeWindow();
 				break;
 		}
 	}
