@@ -121,11 +121,18 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
         }
         Config.Instance().runOnConnect(new Runnable() {
             public void run() {
-                myFBReaderApp.openBook(myBook, bookmark, null);
+                myFBReaderApp.openBook(myBook, bookmark, new Runnable() {
+                    @Override
+                    public void run() {
+                        updateNavBar();
+                    }
+                });
                 AndroidFontUtil.clearFontCache();
             }
         });
     }
+
+    abstract protected void updateNavBar();
 
     protected Book createBookForFile(ZLFile file) {
         if (file == null) {
@@ -215,8 +222,6 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
         myFBReaderApp.addAction(ActionCode.PROCESS_HYPERLINK, new ProcessHyperlinkAction(activity, myFBReaderApp, this));
         myFBReaderApp.addAction(ActionCode.OPEN_VIDEO, new OpenVideoAction(activity, myFBReaderApp, this));
         myFBReaderApp.addAction(ActionCode.HIDE_TOAST, new HideToastAction(activity, myFBReaderApp, this));
-
-        myFBReaderApp.addAction(ActionCode.OPEN_START_SCREEN, new StartScreenAction(activity, myFBReaderApp));
 
         myFBReaderApp.addAction(ActionCode.SET_SCREEN_ORIENTATION_SYSTEM, new SetScreenOrientationAction(activity, myFBReaderApp, ZLibrary.SCREEN_ORIENTATION_SYSTEM));
         myFBReaderApp.addAction(ActionCode.SET_SCREEN_ORIENTATION_SENSOR, new SetScreenOrientationAction(activity, myFBReaderApp, ZLibrary.SCREEN_ORIENTATION_SENSOR));
@@ -371,8 +376,6 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
                 final Book recent = collection.getRecentBook(0);
                 if (recent != null && !collection.sameBook(recent, book)) {
                     myFBReaderApp.openBook(recent, null, null);
-                } else {
-                    myFBReaderApp.openHelpBook();
                 }
             }
         });

@@ -19,6 +19,9 @@
 
 package org.geometerplus.fbreader.fbreader;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import java.util.*;
 
 import org.fbreader.util.ComparisonUtil;
@@ -105,13 +108,10 @@ public final class FBReaderApp extends ZLApplication {
 		return m != null ? m.Book : ExternalBook;
 	}
 
-	public void openHelpBook() {
-		openBook(Collection.getBookByFile(BookUtil.getHelpFile().getPath()), null, null);
-	}
-
-	public void openBook(Book book, final Bookmark bookmark, Runnable postAction) {
+	public void openBook(Book book, final Bookmark bookmark, final Runnable onModelLoaded) {
 		if (Model != null) {
 			if (book == null || bookmark == null && Collection.sameBook(book, Model.Book)) {
+				onModelLoaded.run();
 				return;
 			}
 		}
@@ -130,13 +130,13 @@ public final class FBReaderApp extends ZLApplication {
 		bookToOpen.addNewLabel(Book.READ_LABEL);
 		Collection.saveBook(bookToOpen);
 
-		final SynchronousExecutor executor = createExecutor("loadingBook");
-		executor.execute(new Runnable() {
-			public void run() {
-				openBookInternal(bookToOpen, bookmark, false);
-			}
-		}, postAction);
-	}
+        final SynchronousExecutor executor = createExecutor("loadingBook");
+        executor.execute(new Runnable() {
+            public void run() {
+                openBookInternal(bookToOpen, bookmark, false, onModelLoaded);
+            }
+        }, null);
+    }
 
 	private void reloadBook() {
 		final Book book = getCurrentBook();
@@ -144,7 +144,7 @@ public final class FBReaderApp extends ZLApplication {
 			final SynchronousExecutor executor = createExecutor("loadingBook");
 			executor.execute(new Runnable() {
 				public void run() {
-					openBookInternal(book, null, true);
+					openBookInternal(book, null, true, null);
 				}
 			}, null);
 		}
@@ -262,7 +262,7 @@ public final class FBReaderApp extends ZLApplication {
 		}
 	}
 
-	private synchronized void openBookInternal(final Book book, Bookmark bookmark, boolean force) {
+	private synchronized void openBookInternal(final Book book, Bookmark bookmark, boolean force, Runnable onModelLoaded) {
 		if (!force && Model != null && Collection.sameBook(book, Model.Book)) {
 			if (bookmark != null) {
 				gotoBookmark(bookmark, false);
@@ -308,6 +308,10 @@ public final class FBReaderApp extends ZLApplication {
 
 		try {
 			Model = BookModel.createModel(book, plugin);
+			if (onModelLoaded != null) {
+				Handler handler = new Handler(Looper.getMainLooper());
+				handler.post(onModelLoaded);
+			}
 			Collection.saveBook(book);
 			ZLTextHyphenator.Instance().load(book.getLanguage());
 			BookTextView.setModel(Model.getTextModel());
