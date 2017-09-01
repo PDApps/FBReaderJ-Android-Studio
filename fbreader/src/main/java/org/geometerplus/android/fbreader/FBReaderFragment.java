@@ -102,10 +102,8 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
     protected synchronized void onBookReady(ZLFile zlFile) {
 //        final Bookmark bookmark = FBReaderIntents.getBookmarkExtra(intent);
         final Bookmark bookmark = null;
-        if (myBook == null) {
-            if (zlFile != null) {
-                myBook = createBookForFile(zlFile);
-            }
+        if (zlFile != null) {
+            myBook = createBookForFile(zlFile);
         }
         if (myBook != null) {
             ZLFile file = BookUtil.fileByBook(myBook);
