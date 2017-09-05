@@ -122,7 +122,7 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
                 myFBReaderApp.openBook(myBook, bookmark, new Runnable() {
                     @Override
                     public void run() {
-                        updateNavBar();
+                        onBookOpened();
                     }
                 });
                 AndroidFontUtil.clearFontCache();
@@ -130,7 +130,7 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
         });
     }
 
-    abstract protected void updateNavBar();
+    abstract protected void onBookOpened();
 
     protected Book createBookForFile(ZLFile file) {
         if (file == null) {
@@ -505,5 +505,9 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
     @Override
     public DataService.Connection getDataConnection() {
         return DataConnection;
+    }
+
+    protected int getPageCount() {
+        return myFBReaderApp.getPageCount();
     }
 }

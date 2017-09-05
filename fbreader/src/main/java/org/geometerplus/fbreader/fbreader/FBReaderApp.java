@@ -56,7 +56,6 @@ public final class FBReaderApp extends ZLApplication {
 	public final ImageOptions ImageOptions = new ImageOptions();
 	public final ViewOptions ViewOptions = new ViewOptions();
 	public final PageTurningOptions PageTurningOptions = new PageTurningOptions();
-	public final SyncOptions SyncOptions = new SyncOptions();
 
 	private final ZLKeyBindings myBindings = new ZLKeyBindings();
 
@@ -646,5 +645,9 @@ public final class FBReaderApp extends ZLApplication {
 			clearTextCaches();
 			getViewWidget().repaint();
 		}
+	}
+
+	public int getPageCount() {
+		return BookTextView.pagePosition().Total;
 	}
 }
