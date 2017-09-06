@@ -40,6 +40,10 @@ public abstract class FBReaderIntents {
 
 	public interface Event {
 		String CONFIG_OPTION_CHANGE             = "fbreader.config_service.option_change_event";
+
+		String LIBRARY_BOOK                     = "fbreader.library_service.book_event";
+		String LIBRARY_BUILD                    = "fbreader.library_service.build_event";
+		String LIBRARY_COVER_READY              = "fbreader.library_service.cover_ready";
 	}
 
 	public interface Key {

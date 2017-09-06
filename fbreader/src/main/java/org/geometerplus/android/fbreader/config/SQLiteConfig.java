@@ -30,6 +30,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 import org.geometerplus.android.fbreader.api.FBReaderIntents;
+import org.geometerplus.android.fbreader.libraryService.BookCollectionShadow;
+import org.geometerplus.zlibrary.ui.android.library.ZLAndroidApplication;
 
 final class SQLiteConfig {
 	private final SQLiteDatabase myDatabase;
@@ -136,6 +138,7 @@ final class SQLiteConfig {
 		mySetValueStatement.bindString(3, value);
 		try {
 			mySetValueStatement.execute();
+			sendChangeEvent(group, name, value);
 		} catch (SQLException e) {
 		}
 	}
@@ -145,7 +148,16 @@ final class SQLiteConfig {
 		myUnsetValueStatement.bindString(2, name);
 		try {
 			myUnsetValueStatement.execute();
+			sendChangeEvent(group, name, null);
 		} catch (SQLException e) {
 		}
+	}
+
+	private void sendChangeEvent(String group, String name, String value) {
+		Intent intent = new Intent(FBReaderIntents.Event.CONFIG_OPTION_CHANGE)
+				.putExtra("group", group)
+				.putExtra("name", name)
+				.putExtra("value", value);
+		BookCollectionShadow.onMessage(intent);
 	}
 }

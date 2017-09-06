@@ -55,7 +55,7 @@ import org.geometerplus.android.fbreader.libraryService.BookCollectionShadow;
 import org.geometerplus.android.fbreader.util.AndroidImageSynchronizer;
 import org.geometerplus.android.util.OrientationUtil;
 
-public class BookInfoActivity extends Activity {
+public class BookInfoActivity extends Activity implements IBookCollection.Listener<Book> {
 	private static final boolean ENABLE_EXTENDED_FILE_INFO = false;
 
 	public static final String FROM_READING_MODE_KEY = "fbreader.from.reading.mode";
@@ -136,6 +136,7 @@ public class BookInfoActivity extends Activity {
 		root.requestLayout();
 
 		myCollection.bindToService(this, null);
+		myCollection.addListener(this);
 	}
 
 	@Override
@@ -145,6 +146,7 @@ public class BookInfoActivity extends Activity {
 
 	@Override
 	protected void onDestroy() {
+		myCollection.removeListener(this);
 		myImageSynchronizer.clear();
 
 		super.onDestroy();

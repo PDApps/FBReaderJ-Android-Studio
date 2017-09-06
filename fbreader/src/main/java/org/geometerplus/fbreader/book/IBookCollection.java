@@ -38,6 +38,14 @@ public interface IBookCollection<B extends AbstractBook> extends AbstractSeriali
 		}
 	}
 
+	public interface Listener<B> {
+		void onBookEvent(BookEvent event, B book);
+		void onBuildEvent(Status status);
+	}
+
+	public void addListener(Listener<B> listener);
+	public void removeListener(Listener<B> listener);
+
 	Status status();
 
 	int size();

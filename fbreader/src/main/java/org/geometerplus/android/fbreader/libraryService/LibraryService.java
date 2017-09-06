@@ -102,6 +102,20 @@ public class LibraryService {
 				Paths.systemInfo(mContext), myDatabase, bookDirectories
 			);
 
+			myCollection.addListener(new BookCollection.Listener<DbBook>() {
+				public void onBookEvent(BookEvent event, DbBook book) {
+					final Intent intent = new Intent(FBReaderIntents.Event.LIBRARY_BOOK);
+					intent.putExtra("type", event.toString());
+					intent.putExtra("book", SerializerUtil.serialize(book));
+					BookCollectionShadow.onMessage(intent);
+				}
+
+				public void onBuildEvent(BookCollection.Status status) {
+					final Intent intent = new Intent(FBReaderIntents.Event.LIBRARY_BUILD);
+					intent.putExtra("type", status.toString());
+					BookCollectionShadow.onMessage(intent);
+				}
+			});
 			myCollection.startBuild();
 		}
 
@@ -346,6 +360,14 @@ public class LibraryService {
 			} else {
 				return false;
 			}
+		}
+
+		public void addListener(IBookCollection.Listener<DbBook> listener) {
+			myCollection.addListener(listener);
+		}
+
+		public void removeListener(IBookCollection.Listener<DbBook> listener) {
+			myCollection.removeListener(listener);
 		}
 	}
 

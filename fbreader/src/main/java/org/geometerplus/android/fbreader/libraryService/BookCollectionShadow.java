@@ -24,6 +24,7 @@ import java.util.*;
 import android.content.*;
 import android.os.RemoteException;
 
+import org.geometerplus.android.fbreader.api.FBReaderIntents;
 import org.geometerplus.zlibrary.core.options.Config;
 
 import org.geometerplus.zlibrary.text.view.ZLTextFixedPosition;
@@ -32,10 +33,42 @@ import org.geometerplus.zlibrary.text.view.ZLTextPosition;
 import org.geometerplus.fbreader.book.*;
 
 public class BookCollectionShadow extends AbstractBookCollection<Book> {
-	private volatile Context myContext;
 	private volatile LibraryService.LibraryImplementation myInterface;
+	private static BookCollectionShadow mInstance;
+
+	public static void onMessage(Intent intent) {
+		if (mInstance == null) {
+			System.out.println("BookCollectionShadow is null");
+			return;
+		}
+		if (mInstance.myReceiver == null) {
+			return;
+		}
+		mInstance.myReceiver.onReceive(null, intent);
+	}
+
+	private final BroadcastReceiver myReceiver = new BroadcastReceiver() {
+		public void onReceive(Context context, Intent intent) {
+			if (!hasListeners()) {
+				return;
+			}
+
+			try {
+				final String type = intent.getStringExtra("type");
+				if (FBReaderIntents.Event.LIBRARY_BOOK.equals(intent.getAction())) {
+					final Book book = SerializerUtil.deserializeBook(intent.getStringExtra("book"), BookCollectionShadow.this);
+					fireBookEvent(BookEvent.valueOf(type), book);
+				} else {
+					fireBuildEvent(Status.valueOf(type));
+				}
+			} catch (Exception e) {
+				// ignore
+			}
+		}
+	};
 
 	public BookCollectionShadow() {
+		mInstance = this;
 		myInterface = LibraryService.getImplementation();
 	}
 
