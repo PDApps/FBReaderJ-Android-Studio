@@ -648,6 +648,6 @@ public final class FBReaderApp extends ZLApplication {
 	}
 
 	public int getPageCount() {
-		return BookTextView.pagePosition().Total;
+		return Model.getTextModel().getParagraphsNumber();
 	}
 }
