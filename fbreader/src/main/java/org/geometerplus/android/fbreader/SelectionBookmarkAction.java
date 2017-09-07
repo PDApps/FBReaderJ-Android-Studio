@@ -20,6 +20,7 @@
 package org.geometerplus.android.fbreader;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Parcelable;
 import android.view.View;
 import android.widget.Toast;
@@ -27,7 +28,10 @@ import android.widget.Toast;
 import com.github.johnpersano.supertoasts.library.Style;
 import com.github.johnpersano.supertoasts.library.SuperActivityToast;
 
+import org.geometerplus.android.fbreader.api.FBReaderIntents;
+import org.geometerplus.android.fbreader.bookmark.EditBookmarkActivity;
 import org.geometerplus.android.fbreader.util.FBReaderAdapter;
+import org.geometerplus.android.util.OrientationUtil;
 import org.geometerplus.fbreader.book.Bookmark;
 import org.geometerplus.fbreader.fbreader.FBReaderApp;
 
@@ -59,7 +63,10 @@ public class SelectionBookmarkAction extends FBAndroidAction {
 		toast.setOnButtonClickListener("bkmk", null, new SuperActivityToast.OnButtonClickListener() {
 			@Override
 			public void onClick(View view, Parcelable token) {
-				Toast.makeText(BaseActivity, "Edit bookmark activity was deleted", Toast.LENGTH_SHORT).show();
+				final Intent intent =
+						new Intent(BaseActivity.getApplicationContext(), EditBookmarkActivity.class);
+				FBReaderIntents.putBookmarkExtra(intent, bookmark);
+				OrientationUtil.startActivity(BaseActivity, intent);
 			}
 		});
 		fbReaderAdapter.showToast(toast);

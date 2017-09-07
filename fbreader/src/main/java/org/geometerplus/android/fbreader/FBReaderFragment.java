@@ -182,7 +182,7 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
 
         myFBReaderApp = (FBReaderApp) FBReaderApp.Instance();
         if (myFBReaderApp == null) {
-            myFBReaderApp = new FBReaderApp(Paths.systemInfo(getActivity()), new BookCollectionShadow());
+            myFBReaderApp = new FBReaderApp(Paths.systemInfo(getActivity()), BookCollectionShadow.getInstance());
         }
         getCollection().bindToService(getActivity(), null);
         myBook = null;

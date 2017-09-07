@@ -66,7 +66,7 @@ public class BookInfoActivity extends Activity implements IBookCollection.Listen
 
 	private final AndroidImageSynchronizer myImageSynchronizer = new AndroidImageSynchronizer(this);
 
-	private final BookCollectionShadow myCollection = new BookCollectionShadow();
+	private final BookCollectionShadow myCollection = BookCollectionShadow.getInstance();
 
 	@Override
 	protected void onCreate(Bundle icicle) {

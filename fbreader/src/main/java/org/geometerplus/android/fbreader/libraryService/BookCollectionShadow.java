@@ -47,6 +47,13 @@ public class BookCollectionShadow extends AbstractBookCollection<Book> {
 		mInstance.myReceiver.onReceive(null, intent);
 	}
 
+	public static BookCollectionShadow getInstance() {
+		if(mInstance == null){
+			mInstance = new BookCollectionShadow();
+		}
+		return mInstance;
+	}
+
 	private final BroadcastReceiver myReceiver = new BroadcastReceiver() {
 		public void onReceive(Context context, Intent intent) {
 			if (!hasListeners()) {
@@ -67,7 +74,7 @@ public class BookCollectionShadow extends AbstractBookCollection<Book> {
 		}
 	};
 
-	public BookCollectionShadow() {
+	private BookCollectionShadow() {
 		mInstance = this;
 		myInterface = LibraryService.getImplementation();
 	}

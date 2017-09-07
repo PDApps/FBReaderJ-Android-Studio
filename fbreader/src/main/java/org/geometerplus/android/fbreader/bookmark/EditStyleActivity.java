@@ -38,7 +38,7 @@ public class EditStyleActivity extends PreferenceActivity {
 	static final String STYLE_ID_KEY = "style.id";
 
 	private final ZLResource myRootResource = ZLResource.resource("editStyle");
-	private final BookCollectionShadow myCollection = new BookCollectionShadow();
+	private final BookCollectionShadow myCollection = BookCollectionShadow.getInstance();
 	private HighlightingStyle myStyle;
 	private BgColorPreference myBgColorPreference;
 
