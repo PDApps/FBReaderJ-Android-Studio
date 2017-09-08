@@ -26,8 +26,10 @@ import org.geometerplus.android.util.UIMessageUtil;
 import org.geometerplus.android.util.UIUtil;
 import org.geometerplus.fbreader.Paths;
 import org.geometerplus.fbreader.book.Book;
+import org.geometerplus.fbreader.book.BookEvent;
 import org.geometerplus.fbreader.book.BookUtil;
 import org.geometerplus.fbreader.book.Bookmark;
+import org.geometerplus.fbreader.book.IBookCollection;
 import org.geometerplus.fbreader.bookmodel.BookModel;
 import org.geometerplus.fbreader.fbreader.ActionCode;
 import org.geometerplus.fbreader.fbreader.FBReaderApp;
@@ -182,7 +184,23 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
 
         myFBReaderApp = (FBReaderApp) FBReaderApp.Instance();
         if (myFBReaderApp == null) {
-            myFBReaderApp = new FBReaderApp(Paths.systemInfo(getActivity()), BookCollectionShadow.getInstance());
+            BookCollectionShadow bookCollectionShadow = BookCollectionShadow.getInstance();
+            myFBReaderApp = new FBReaderApp(Paths.systemInfo(getActivity()), bookCollectionShadow);
+            bookCollectionShadow.addListener(new IBookCollection.Listener() {
+                @Override
+                public void onBookEvent(BookEvent event, Object book) {
+                    switch (event){
+                        case ProgressUpdated:
+                            onProgressUpdated();
+                            break;
+                    }
+                }
+
+                @Override
+                public void onBuildEvent(IBookCollection.Status status) {
+
+                }
+            });
         }
         getCollection().bindToService(getActivity(), null);
         myBook = null;
@@ -237,6 +255,8 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
 
         return mainLayout;
     }
+
+    protected abstract void onProgressUpdated();
 
     @Override
     public void onStart() {
@@ -509,5 +529,9 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
 
     protected int getPageCount() {
         return myFBReaderApp.getPageCount();
+    }
+
+    protected int getProgress() {
+        return myFBReaderApp.getProgress();
     }
 }

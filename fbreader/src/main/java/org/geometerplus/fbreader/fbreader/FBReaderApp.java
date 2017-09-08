@@ -674,4 +674,10 @@ public final class FBReaderApp extends ZLApplication {
 	public int getPageCount() {
 		return Model.getTextModel().getParagraphsNumber();
 	}
+
+	public int getProgress() {
+		ZLTextView.PagePosition pagePosition = BookTextView.pagePosition();
+		int progress = pagePosition.Current * 100 / pagePosition.Total;
+		return progress;
+	}
 }
