@@ -305,7 +305,8 @@ public class BookCollectionShadow extends AbstractBookCollection<Book> {
 
 	public synchronized void storePosition(long bookId, ZLTextPosition position) {
 		if (position != null && myInterface != null) {
-				myInterface.storePosition(bookId, new PositionWithTimestamp(position));
+			myInterface.storePosition(bookId, new PositionWithTimestamp(position));
+			fireBookEvent(BookEvent.ProgressUpdated, getBookById(bookId));
 		}
 	}
 
