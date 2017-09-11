@@ -676,6 +676,10 @@ public final class FBReaderApp extends ZLApplication {
 	}
 
 	public int getProgress() {
-		return myStoredPosition.getParagraphIndex();
+		if (myStoredPosition != null) {
+			return myStoredPosition.getParagraphIndex();
+		} else {
+			return -1;
+		}
 	}
 }
