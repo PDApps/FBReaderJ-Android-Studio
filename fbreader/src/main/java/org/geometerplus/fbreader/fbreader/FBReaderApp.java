@@ -238,6 +238,11 @@ public final class FBReaderApp extends ZLApplication {
 		FootnoteView.clearCaches();
 	}
 
+	public TextSnippet getSelectedSnippet() {
+		final FBView fbView = getTextView();
+		return fbView.getSelectedSnippet();
+	}
+
 	public Bookmark addSelectionBookmark() {
 		final FBView fbView = getTextView();
 		final TextSnippet snippet = fbView.getSelectedSnippet();
