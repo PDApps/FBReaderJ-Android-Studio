@@ -21,6 +21,7 @@ package org.geometerplus.zlibrary.text.view;
 
 import java.util.*;
 
+import org.geometerplus.fbreader.util.TextSnippet;
 import org.geometerplus.zlibrary.core.application.ZLApplication;
 import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 import org.geometerplus.zlibrary.core.image.ZLImageData;
@@ -303,9 +304,9 @@ public abstract class ZLTextView extends ZLTextViewBase {
 		return result;
 	}
 
-	public void highlight(ZLTextPosition start, ZLTextPosition end) {
+	public void highlight(TextSnippet textSnippet) {
 		removeHighlightings(ZLTextManualHighlighting.class);
-		addHighlighting(new ZLTextManualHighlighting(this, start, end));
+		addHighlighting(new ZLTextManualHighlighting(this, textSnippet));
 	}
 
 	public final void addHighlighting(ZLTextHighlighting h) {

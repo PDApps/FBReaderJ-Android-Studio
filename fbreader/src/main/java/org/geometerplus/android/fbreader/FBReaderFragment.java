@@ -16,9 +16,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
-import org.geometerplus.android.fbreader.api.ApiListener;
-import org.geometerplus.android.fbreader.api.ApiServerImplementation;
-import org.geometerplus.android.fbreader.api.PluginApi;
 import org.geometerplus.android.fbreader.httpd.DataService;
 import org.geometerplus.android.fbreader.libraryService.BookCollectionShadow;
 import org.geometerplus.android.fbreader.libraryService.LibraryService;
@@ -71,30 +68,6 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
     volatile Runnable OnResumeAction = null;
 
     private static final String PLUGIN_ACTION_PREFIX = "___";
-    private final List<PluginApi.ActionInfo> myPluginActions =
-            new LinkedList<PluginApi.ActionInfo>();
-    private final BroadcastReceiver myPluginInfoReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            final ArrayList<PluginApi.ActionInfo> actions = getResultExtras(true).<PluginApi.ActionInfo>getParcelableArrayList(PluginApi.PluginInfo.KEY);
-            if (actions != null) {
-                synchronized (myPluginActions) {
-                    int index = 0;
-                    while (index < myPluginActions.size()) {
-                        myFBReaderApp.removeAction(PLUGIN_ACTION_PREFIX + index++);
-                    }
-                    myPluginActions.addAll(actions);
-                    index = 0;
-                    for (PluginApi.ActionInfo info : myPluginActions) {
-                        myFBReaderApp.addAction(
-                                PLUGIN_ACTION_PREFIX + index++,
-                                new RunPluginAction(FBReaderFragment.this.getActivity(), myFBReaderApp, info.getId())
-                        );
-                    }
-                }
-            }
-        }
-    };
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -261,8 +234,6 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
     public void onStart() {
         super.onStart();
 
-        initPluginActions();
-
         final ZLAndroidLibrary zlibrary = getZLibrary();
 
         Config.Instance().runOnConnect(new Runnable() {
@@ -277,26 +248,6 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
         ((PopupPanel) myFBReaderApp.getPopupById(TextSearchPopup.ID)).setPanelInfo(getActivity(), myRootView);
         ((NavigationPopup) myFBReaderApp.getPopupById(NavigationPopup.ID)).setPanelInfo(getActivity(), myRootView);
         ((PopupPanel) myFBReaderApp.getPopupById(SelectionPopup.ID)).setPanelInfo(getActivity(), myRootView);
-    }
-
-    private void initPluginActions() {
-        synchronized (myPluginActions) {
-            int index = 0;
-            while (index < myPluginActions.size()) {
-                myFBReaderApp.removeAction(PLUGIN_ACTION_PREFIX + index++);
-            }
-            myPluginActions.clear();
-        }
-
-        getActivity().sendOrderedBroadcast(
-                new Intent(PluginApi.ACTION_REGISTER),
-                null,
-                myPluginInfoReceiver,
-                null,
-                RESULT_OK,
-                null,
-                null
-        );
     }
 
     @Override
@@ -340,7 +291,6 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
         }
 
         PopupPanel.restoreVisibilities(myFBReaderApp);
-        ApiServerImplementation.sendEvent(getActivity(), ApiListener.EVENT_READ_MODE_OPENED);
     }
 
     @Override
@@ -363,7 +313,6 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
 
     @Override
     public void onStop() {
-        ApiServerImplementation.sendEvent(getActivity(), ApiListener.EVENT_READ_MODE_CLOSED);
         PopupPanel.removeAllWindows(myFBReaderApp, getActivity());
         super.onStop();
     }

@@ -21,9 +21,12 @@ package org.geometerplus.zlibrary.ui.android.library;
 
 import android.app.Application;
 
+import org.geometerplus.fbreader.util.TextSnippet;
 import org.geometerplus.zlibrary.ui.android.image.ZLAndroidImageManager;
 
 import org.geometerplus.android.fbreader.config.ConfigShadow;
+
+import java.util.ArrayList;
 
 public abstract class ZLAndroidApplication extends Application {
     private static ZLAndroidApplication mInstance;
@@ -52,5 +55,9 @@ public abstract class ZLAndroidApplication extends Application {
 
     public static ZLAndroidApplication getInstance() {
         return mInstance;
+    }
+
+    public ArrayList<TextSnippet> getAnnotations() {
+        return new ArrayList<>();
     }
 }

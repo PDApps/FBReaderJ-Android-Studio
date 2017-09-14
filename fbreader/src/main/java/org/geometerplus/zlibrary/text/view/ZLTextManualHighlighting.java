@@ -19,11 +19,12 @@
 
 package org.geometerplus.zlibrary.text.view;
 
+import org.geometerplus.fbreader.util.TextSnippet;
 import org.geometerplus.zlibrary.core.util.ZLColor;
 
 class ZLTextManualHighlighting extends ZLTextSimpleHighlighting {
-	ZLTextManualHighlighting(ZLTextView view, ZLTextPosition start, ZLTextPosition end) {
-		super(view, start, end);
+	ZLTextManualHighlighting(ZLTextView view, TextSnippet textSnippet) {
+		super(view, textSnippet);
 	}
 
 	@Override

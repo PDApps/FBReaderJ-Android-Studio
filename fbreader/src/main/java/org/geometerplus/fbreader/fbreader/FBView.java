@@ -112,7 +112,7 @@ public final class FBView extends ZLTextView {
 		if (highlighting instanceof BookmarkHighlighting) {
 			myReader.runAction(
 				ActionCode.SELECTION_BOOKMARK,
-				((BookmarkHighlighting)highlighting).Bookmark
+				((BookmarkHighlighting)highlighting).getTextSnippet()
 			);
 			return;
 		}

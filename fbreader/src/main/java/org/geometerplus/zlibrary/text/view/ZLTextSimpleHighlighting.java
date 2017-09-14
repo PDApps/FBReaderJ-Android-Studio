@@ -19,17 +19,19 @@
 
 package org.geometerplus.zlibrary.text.view;
 
-import org.geometerplus.zlibrary.core.view.HorizontalConvexHull;
+import org.geometerplus.fbreader.util.TextSnippet;
 
 public abstract class ZLTextSimpleHighlighting extends ZLTextHighlighting {
 	protected final ZLTextView View;
 	private final ZLTextPosition myStartPosition;
 	private final ZLTextPosition myEndPosition;
+	private TextSnippet mTextSnippet;
 
-	protected ZLTextSimpleHighlighting(ZLTextView view, ZLTextPosition start, ZLTextPosition end) {
+	protected ZLTextSimpleHighlighting(ZLTextView view, TextSnippet textSnippet) {
 		View = view;
-		myStartPosition = new ZLTextFixedPosition(start);
-		myEndPosition = new ZLTextFixedPosition(end);
+		myStartPosition = textSnippet.getStart();
+		myEndPosition = textSnippet.getEnd();
+		mTextSnippet = textSnippet;
 	}
 
 	@Override
@@ -55,5 +57,9 @@ public abstract class ZLTextSimpleHighlighting extends ZLTextHighlighting {
 	@Override
 	public final ZLTextElementArea getEndArea(ZLTextPage page) {
 		return page.TextElementMap.getLastBefore(myEndPosition);
+	}
+
+	public TextSnippet getTextSnippet() {
+		return mTextSnippet;
 	}
 }
