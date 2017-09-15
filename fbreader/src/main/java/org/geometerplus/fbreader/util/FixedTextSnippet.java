@@ -21,7 +21,9 @@ package org.geometerplus.fbreader.util;
 
 import org.geometerplus.zlibrary.text.view.ZLTextPosition;
 
-public final class FixedTextSnippet implements TextSnippet {
+import java.io.Serializable;
+
+public final class FixedTextSnippet implements TextSnippet, Serializable {
 	private final ZLTextPosition myStart;
 	private final ZLTextPosition myEnd;
 	private final String myText;

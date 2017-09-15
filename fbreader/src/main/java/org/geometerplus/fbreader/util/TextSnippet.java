@@ -21,8 +21,12 @@ package org.geometerplus.fbreader.util;
 
 import org.geometerplus.zlibrary.text.view.ZLTextPosition;
 
-public interface TextSnippet {
-	ZLTextPosition getStart();
-	ZLTextPosition getEnd();
-	String getText();
+import java.io.Serializable;
+
+public interface TextSnippet extends Serializable {
+    ZLTextPosition getStart();
+
+    ZLTextPosition getEnd();
+
+    String getText();
 }

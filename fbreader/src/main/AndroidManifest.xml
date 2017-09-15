@@ -26,15 +26,6 @@ Compile By Tandong  2016.3.24
         android:label="@string/app_name"
         android:logo="@drawable/fbreader_bw"
         tools:replace="android:icon">
-        <service
-            android:name="org.geometerplus.android.fbreader.api.ApiService"
-            android:launchMode="singleTask">
-            <intent-filter>
-                <action android:name="android.fbreader.action.API" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </service>
         <activity
             android:name="org.geometerplus.android.fbreader.PluginListActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

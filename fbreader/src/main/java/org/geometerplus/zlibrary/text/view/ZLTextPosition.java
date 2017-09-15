@@ -19,7 +19,9 @@
 
 package org.geometerplus.zlibrary.text.view;
 
-public abstract class ZLTextPosition implements Comparable<ZLTextPosition> {
+import java.io.Serializable;
+
+public abstract class ZLTextPosition implements Comparable<ZLTextPosition>, Serializable {
 	public abstract int getParagraphIndex();
 	public abstract int getElementIndex();
 	public abstract int getCharIndex();
