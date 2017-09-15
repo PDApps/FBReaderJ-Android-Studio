@@ -26,6 +26,7 @@ import java.util.*;
 
 import org.fbreader.util.ComparisonUtil;
 
+import org.geometerplus.android.fbreader.util.DBookmark;
 import org.geometerplus.zlibrary.core.application.*;
 import org.geometerplus.zlibrary.core.drm.FileEncryptionInfo;
 import org.geometerplus.zlibrary.core.drm.EncryptionMethod;
@@ -267,17 +268,17 @@ public final class FBReaderApp extends ZLApplication {
 	}
 
 	private void setBookmarkHighlightings(ZLTextView view) {
-		ArrayList<TextSnippet> annotations = getAnnotations();
+		ArrayList<DBookmark> annotations = getAnnotations();
 		view.removeHighlightings(BookmarkHighlighting.class);
 		if (annotations == null) {
 			return;
 		}
-		for (TextSnippet textSnippet : annotations) {
-			view.addHighlighting(new BookmarkHighlighting(view, textSnippet));
+		for (DBookmark dBookmark : annotations) {
+			view.addHighlighting(new BookmarkHighlighting(view, dBookmark));
 		}
 	}
 
-	private ArrayList<TextSnippet> getAnnotations() {
+	private ArrayList<DBookmark> getAnnotations() {
 		return ZLAndroidApplication.getInstance().getAnnotations();
 	}
 

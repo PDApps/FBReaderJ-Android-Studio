@@ -19,12 +19,13 @@
 
 package org.geometerplus.zlibrary.text.view;
 
+import org.geometerplus.android.fbreader.util.DBookmark;
 import org.geometerplus.fbreader.util.TextSnippet;
 import org.geometerplus.zlibrary.core.util.ZLColor;
 
 class ZLTextManualHighlighting extends ZLTextSimpleHighlighting {
-	ZLTextManualHighlighting(ZLTextView view, TextSnippet textSnippet) {
-		super(view, textSnippet);
+	ZLTextManualHighlighting(ZLTextView view, DBookmark dBookmark) {
+		super(view, dBookmark);
 	}
 
 	@Override

@@ -21,6 +21,7 @@ package org.geometerplus.zlibrary.ui.android.library;
 
 import android.app.Application;
 
+import org.geometerplus.android.fbreader.util.DBookmark;
 import org.geometerplus.fbreader.util.TextSnippet;
 import org.geometerplus.zlibrary.ui.android.image.ZLAndroidImageManager;
 
@@ -57,7 +58,7 @@ public abstract class ZLAndroidApplication extends Application {
         return mInstance;
     }
 
-    public ArrayList<TextSnippet> getAnnotations() {
+    public ArrayList<DBookmark> getAnnotations() {
         return new ArrayList<>();
     }
 }

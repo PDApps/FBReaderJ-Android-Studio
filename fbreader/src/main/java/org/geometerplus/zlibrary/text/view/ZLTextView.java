@@ -21,6 +21,7 @@ package org.geometerplus.zlibrary.text.view;
 
 import java.util.*;
 
+import org.geometerplus.android.fbreader.util.DBookmark;
 import org.geometerplus.fbreader.util.TextSnippet;
 import org.geometerplus.zlibrary.core.application.ZLApplication;
 import org.geometerplus.zlibrary.core.filesystem.ZLFile;
@@ -304,9 +305,9 @@ public abstract class ZLTextView extends ZLTextViewBase {
 		return result;
 	}
 
-	public void highlight(TextSnippet textSnippet) {
+	public void highlight(DBookmark dBookmark) {
 		removeHighlightings(ZLTextManualHighlighting.class);
-		addHighlighting(new ZLTextManualHighlighting(this, textSnippet));
+		addHighlighting(new ZLTextManualHighlighting(this, dBookmark));
 	}
 
 	public final void addHighlighting(ZLTextHighlighting h) {

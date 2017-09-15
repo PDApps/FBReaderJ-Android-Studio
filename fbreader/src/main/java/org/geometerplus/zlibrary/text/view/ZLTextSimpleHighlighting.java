@@ -19,19 +19,21 @@
 
 package org.geometerplus.zlibrary.text.view;
 
+import org.geometerplus.android.fbreader.util.DBookmark;
 import org.geometerplus.fbreader.util.TextSnippet;
 
 public abstract class ZLTextSimpleHighlighting extends ZLTextHighlighting {
 	protected final ZLTextView View;
 	private final ZLTextPosition myStartPosition;
 	private final ZLTextPosition myEndPosition;
-	private TextSnippet mTextSnippet;
+	private DBookmark mDBookmark;
 
-	protected ZLTextSimpleHighlighting(ZLTextView view, TextSnippet textSnippet) {
+	protected ZLTextSimpleHighlighting(ZLTextView view, DBookmark dBookmark) {
 		View = view;
+		TextSnippet textSnippet = dBookmark.getTextSnippet();
 		myStartPosition = textSnippet.getStart();
 		myEndPosition = textSnippet.getEnd();
-		mTextSnippet = textSnippet;
+		mDBookmark = dBookmark;
 	}
 
 	@Override
@@ -59,7 +61,7 @@ public abstract class ZLTextSimpleHighlighting extends ZLTextHighlighting {
 		return page.TextElementMap.getLastBefore(myEndPosition);
 	}
 
-	public TextSnippet getTextSnippet() {
-		return mTextSnippet;
+	public DBookmark getDBookmark() {
+		return mDBookmark;
 	}
 }
