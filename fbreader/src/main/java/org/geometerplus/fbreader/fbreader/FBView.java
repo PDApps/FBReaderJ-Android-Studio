@@ -116,6 +116,7 @@ public final class FBView extends ZLTextView {
 			return;
 		}
 
+		myReader.runAction(ActionCode.HIDE_ANNOTATIONS);
 		if (myReader.isActionEnabled(ActionCode.HIDE_TOAST)) {
 			myReader.runAction(ActionCode.HIDE_TOAST);
 			return;
@@ -132,6 +133,7 @@ public final class FBView extends ZLTextView {
 	@Override
 	public void onFingerDoubleTap(int x, int y) {
 		myReader.runAction(ActionCode.HIDE_TOAST);
+		myReader.runAction(ActionCode.HIDE_ANNOTATIONS);
 
 		myReader.runAction(getZoneMap().getActionByCoordinates(
 			x, y, getContextWidth(), getContextHeight(), TapZoneMap.Tap.doubleTap
@@ -141,6 +143,7 @@ public final class FBView extends ZLTextView {
 	@Override
 	public void onFingerPress(int x, int y) {
 		myReader.runAction(ActionCode.HIDE_TOAST);
+		myReader.runAction(ActionCode.HIDE_ANNOTATIONS);
 
 		final float maxDist = ZLibrary.Instance().getDisplayDPI() / 4;
 		final SelectionCursor.Which cursor = findSelectionCursor(x, y, maxDist * maxDist);

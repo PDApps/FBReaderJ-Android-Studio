@@ -77,6 +77,7 @@ public interface ActionCode {
 	String OPEN_VIDEO = "video";
 
 	String HIDE_TOAST = "hideToast";
+	String HIDE_ANNOTATIONS = "hideAnnotations";
 	String OPEN_WEB_HELP = "help";
 	String INSTALL_PLUGINS = "plugins";
 }
