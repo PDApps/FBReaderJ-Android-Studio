@@ -43,13 +43,8 @@ import org.geometerplus.zlibrary.ui.android.library.ZLAndroidLibrary;
 import org.geometerplus.zlibrary.ui.android.view.AndroidFontUtil;
 import org.geometerplus.zlibrary.ui.android.view.ZLAndroidWidget;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-
-import static android.app.Activity.RESULT_OK;
 
 /**
  * Created by Andrew Churilo on 17.08.2017.
@@ -67,16 +62,12 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
     volatile boolean IsPaused = false;
     volatile Runnable OnResumeAction = null;
 
-    private static final String PLUGIN_ACTION_PREFIX = "___";
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
     }
 
     protected synchronized void onBookReady(ZLFile zlFile) {
-//        final Bookmark bookmark = FBReaderIntents.getBookmarkExtra(intent);
-        final Bookmark bookmark = null;
         if (zlFile != null) {
             myBook = createBookForFile(zlFile);
         }
@@ -94,7 +85,7 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
         }
         Config.Instance().runOnConnect(new Runnable() {
             public void run() {
-                myFBReaderApp.openBook(myBook, bookmark, new Runnable() {
+                myFBReaderApp.openBook(myBook, new Runnable() {
                     @Override
                     public void run() {
                         onBookOpened();
@@ -285,7 +276,7 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
         if (myFBReaderApp.Model == null && myFBReaderApp.ExternalBook != null) {
             getCollection().bindToService(getActivity(), new Runnable() {
                 public void run() {
-                    myFBReaderApp.openBook(myFBReaderApp.ExternalBook, null, null);
+                    myFBReaderApp.openBook(myFBReaderApp.ExternalBook, null);
                 }
             });
         }
@@ -341,7 +332,7 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
             public void run() {
                 final Book recent = collection.getRecentBook(0);
                 if (recent != null && !collection.sameBook(recent, book)) {
-                    myFBReaderApp.openBook(recent, null, null);
+                    myFBReaderApp.openBook(recent, null);
                 }
             }
         });

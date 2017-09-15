@@ -133,9 +133,9 @@ public final class FBReaderApp extends ZLApplication {
 		return m != null ? m.Book : ExternalBook;
 	}
 
-	public void openBook(Book book, final Bookmark bookmark, final Runnable onModelLoaded) {
+	public void openBook(Book book, final Runnable onModelLoaded) {
 		if (Model != null) {
-			if (book == null || bookmark == null && Collection.sameBook(book, Model.Book)) {
+			if (Collection.sameBook(book, Model.Book)) {
 				onModelLoaded.run();
 				return;
 			}
@@ -464,20 +464,6 @@ public final class FBReaderApp extends ZLApplication {
 
 	public boolean hasCancelActions() {
 		return new CancelMenuHelper().getActionsList(Collection).size() > 1;
-	}
-
-	public void runCancelAction(CancelMenuHelper.ActionType type, Bookmark bookmark) {
-		switch (type) {
-			case library:
-				runAction(ActionCode.SHOW_LIBRARY);
-				break;
-			case networkLibrary:
-				runAction(ActionCode.SHOW_NETWORK_LIBRARY);
-				break;
-			case previousBook:
-				openBook(Collection.getRecentBook(1), null, null);
-				break;
-		}
 	}
 
 	private synchronized void updateInvisibleBookmarksList(Bookmark b) {
