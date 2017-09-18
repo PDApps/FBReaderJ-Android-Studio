@@ -240,10 +240,9 @@ public final class FBReaderApp extends ZLApplication {
 		FootnoteView.clearCaches();
 	}
 
-	public TextSnippet getSelectedSnippetAndClear() {
+	public TextSnippet getSelectedSnippet() {
 		final FBView fbView = getTextView();
 		TextSnippet textSnippet = fbView.getSelectedSnippet();
-		fbView.clearSelection();
 		return textSnippet;
 	}
 
