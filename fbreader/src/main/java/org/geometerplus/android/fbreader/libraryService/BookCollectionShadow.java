@@ -47,6 +47,14 @@ public class BookCollectionShadow extends AbstractBookCollection<Book> {
 		mInstance.myReceiver.onReceive(null, intent);
 	}
 
+	public static void onEvent(BookEvent bookEvent) {
+		if (mInstance == null) {
+			System.out.println("BookCollectionShadow is null");
+			return;
+		}
+		mInstance.fireBookEvent(bookEvent, null);
+	}
+
 	public static BookCollectionShadow getInstance() {
 		if(mInstance == null){
 			mInstance = new BookCollectionShadow();

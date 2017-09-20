@@ -20,10 +20,16 @@
 package org.geometerplus.android.fbreader;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 
+import org.geometerplus.android.fbreader.libraryService.BookCollectionShadow;
+import org.geometerplus.fbreader.book.BookEvent;
+import org.geometerplus.fbreader.book.SerializerUtil;
 import org.geometerplus.zlibrary.core.application.ZLApplication;
 import org.geometerplus.zlibrary.core.resources.ZLResource;
 
@@ -106,6 +112,16 @@ final class NavigationPopup extends ZLApplication.PopupPanel {
 		final SeekBar slider = (SeekBar)myWindow.findViewById(R.id.navigation_slider);
 		final TextView text = (TextView)myWindow.findViewById(R.id.navigation_text);
 
+		final Runnable updatePageRunnable = new Runnable() {
+			@Override
+			public void run() {
+				if (myStartPosition != null &&
+						!myStartPosition.equals(myFBReader.getTextView().getStartCursor())) {
+					myFBReader.storePosition();
+				}
+			}
+		};
+		final Handler handler = new Handler(Looper.getMainLooper());
 		slider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 			private void gotoPage(int page) {
 				final ZLTextView view = myFBReader.getTextView();
@@ -116,6 +132,9 @@ final class NavigationPopup extends ZLApplication.PopupPanel {
 				}
 				myFBReader.getViewWidget().reset();
 				myFBReader.getViewWidget().repaint();
+				BookCollectionShadow.onEvent(BookEvent.ProgressUpdated);
+				handler.removeCallbacks(updatePageRunnable);
+				handler.postDelayed(updatePageRunnable, 50);
 			}
 
 			public void onStartTrackingTouch(SeekBar seekBar) {
@@ -135,33 +154,6 @@ final class NavigationPopup extends ZLApplication.PopupPanel {
 				}
 			}
 		});
-
-		final Button btnOk = (Button)myWindow.findViewById(R.id.navigation_ok);
-		final Button btnCancel = (Button)myWindow.findViewById(R.id.navigation_cancel);
-		View.OnClickListener listener = new View.OnClickListener() {
-			public void onClick(View v) {
-				final ZLTextWordCursor position = myStartPosition;
-				if (v == btnCancel && position != null) {
-					myFBReader.getTextView().gotoPosition(position);
-				} else if (v == btnOk) {
-					if (myStartPosition != null &&
-						!myStartPosition.equals(myFBReader.getTextView().getStartCursor())) {
-						myFBReader.addInvisibleBookmark(myStartPosition);
-						myFBReader.storePosition();
-					}
-				}
-				myStartPosition = null;
-				Application.hideActivePopup();
-				myFBReader.getViewWidget().reset();
-				myFBReader.getViewWidget().repaint();
-			}
-		};
-		btnOk.setOnClickListener(listener);
-		btnCancel.setOnClickListener(listener);
-
-		final ZLResource buttonResource = ZLResource.resource("dialog").getResource("button");
-		btnOk.setText(buttonResource.getResource("ok").getValue());
-		btnCancel.setText(buttonResource.getResource("cancel").getValue());
 	}
 
 	private void setupNavigation() {

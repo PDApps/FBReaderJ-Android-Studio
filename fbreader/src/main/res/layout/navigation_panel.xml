@@ -30,31 +30,4 @@
 		android:layout_height="wrap_content"
 		android:paddingTop="4dp"
 	/>
-	<LinearLayout
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:orientation="horizontal"
-		android:layout_below="@id/navigation_slider"
-		android:weightSum="1.0"
-		android:layout_alignParentBottom="true"
-		android:paddingTop="4dp"
-	>
-		<Button
-			android:id="@+id/navigation_ok"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:layout_weight="0.45"
-		/>
-		<View
-			android:layout_width="0dp"
-			android:layout_height="0dp"
-			android:layout_weight="0.1"
-		/>
-		<Button
-			android:id="@+id/navigation_cancel"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:layout_weight="0.45"
-		/>
-	</LinearLayout>
 </org.geometerplus.android.fbreader.NavigationWindow>

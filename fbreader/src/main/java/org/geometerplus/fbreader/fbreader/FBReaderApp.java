@@ -581,10 +581,7 @@ public final class FBReaderApp extends ZLApplication {
 	}
 
 	public int getProgress() {
-		if (myStoredPosition != null) {
-			return myStoredPosition.getParagraphIndex();
-		} else {
-			return -1;
-		}
+		final ZLTextPosition position = new ZLTextFixedPosition(BookTextView.getStartCursor());
+		return position.getParagraphIndex();
 	}
 }

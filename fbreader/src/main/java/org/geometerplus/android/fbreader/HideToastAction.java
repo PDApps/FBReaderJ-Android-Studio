@@ -34,11 +34,12 @@ public class HideToastAction extends FBAndroidAction {
 
     @Override
     public boolean isEnabled() {
-        return fbReaderAdapter.isToastShown();
+        return fbReaderAdapter.isToastShown() || Reader.getActivePopup() != null;
     }
 
     @Override
     protected void run(Object... params) {
         fbReaderAdapter.hideToast();
+        Reader.hideActivePopup();
     }
 }
