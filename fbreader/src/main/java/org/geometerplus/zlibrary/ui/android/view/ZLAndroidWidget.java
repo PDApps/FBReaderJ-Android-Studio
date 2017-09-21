@@ -138,7 +138,7 @@ public class ZLAndroidWidget extends MainView implements ZLViewWidget, View.OnLo
 			if (animator.getMode().Auto) {
 				postInvalidate();
 			}
-			drawFooter(canvas, animator);
+//			drawFooter(canvas, animator);
 		} else {
 			switch (oldMode) {
 				case AnimatedScrollingForward:
@@ -287,7 +287,7 @@ public class ZLAndroidWidget extends MainView implements ZLViewWidget, View.OnLo
 
 	private void onDrawStatic(final Canvas canvas) {
 		canvas.drawBitmap(myBitmapManager.getBitmap(ZLView.PageIndex.current), 0, 0, myPaint);
-		drawFooter(canvas, null);
+//		drawFooter(canvas, null);
 		post(new Runnable() {
 			public void run() {
 				PrepareService.execute(new Runnable() {
@@ -552,8 +552,9 @@ public class ZLAndroidWidget extends MainView implements ZLViewWidget, View.OnLo
 	}
 
 	private int getMainAreaHeight() {
-		final ZLView.FooterArea footer = ZLApplication.Instance().getCurrentView().getFooterArea();
-		return footer != null ? getHeight() - footer.getHeight() : getHeight();
+//		final ZLView.FooterArea footer = ZLApplication.Instance().getCurrentView().getFooterArea();
+//		return footer != null ? getHeight() - footer.getHeight() : getHeight();
+		return getHeight();
 	}
 
 	@Override
