@@ -19,6 +19,8 @@
 
 package org.geometerplus.fbreader.fbreader;
 
+import android.graphics.Color;
+
 import org.geometerplus.android.fbreader.util.DBookmark;
 import org.geometerplus.fbreader.util.TextSnippet;
 import org.geometerplus.zlibrary.core.util.ZLColor;
@@ -28,13 +30,15 @@ import org.geometerplus.zlibrary.text.view.*;
 import org.geometerplus.fbreader.book.*;
 
 public final class BookmarkHighlighting extends ZLTextSimpleHighlighting {
+    private ZLColor backgroundColor = new ZLColor(Color.DKGRAY);
+
     BookmarkHighlighting(ZLTextView view, DBookmark dBookmark) {
         super(view, dBookmark);
     }
 
     @Override
     public ZLColor getBackgroundColor() {
-        return View.getSelectionBackgroundColor();
+        return backgroundColor;
     }
 
     @Override
