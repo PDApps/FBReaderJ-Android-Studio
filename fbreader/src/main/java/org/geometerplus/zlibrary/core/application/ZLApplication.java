@@ -72,12 +72,6 @@ public abstract class ZLApplication {
 		setView(myView);
 	}
 
-	protected void setTitle(String title) {
-		if (myWindow != null) {
-			myWindow.setWindowTitle(title);
-		}
-	}
-
 	protected void showErrorMessage(String resourceKey) {
 		if (myWindow != null) {
 			myWindow.showErrorMessage(resourceKey);

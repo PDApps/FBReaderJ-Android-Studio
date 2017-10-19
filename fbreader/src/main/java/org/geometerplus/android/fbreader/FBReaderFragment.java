@@ -442,15 +442,6 @@ public abstract class FBReaderFragment extends FBReaderBaseFragment implements Z
     }
 
     @Override
-    public void setWindowTitle(final String title) {
-        getActivity().runOnUiThread(new Runnable() {
-            public void run() {
-                getActivity().setTitle(title);
-            }
-        });
-    }
-
-    @Override
     public void outlineRegion(ZLTextRegion.Soul soul) {
         myFBReaderApp.getTextView().outlineRegion(soul);
         myFBReaderApp.getViewWidget().repaint();

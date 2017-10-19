@@ -338,7 +338,6 @@ public final class FBReaderApp extends ZLApplication {
 				}
 				title.append(")");
 			}
-			setTitle(title.toString());
 		} catch (BookReadingException e) {
 			e.printStackTrace();
 		}
