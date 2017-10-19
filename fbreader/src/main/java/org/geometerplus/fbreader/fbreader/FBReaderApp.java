@@ -269,7 +269,10 @@ public final class FBReaderApp extends ZLApplication {
 	private void setBookmarkHighlightings(ZLTextView view) {
 		ArrayList<DBookmark> annotations = getAnnotations();
 		view.removeHighlightings(BookmarkHighlighting.class);
-		if (annotations == null) {
+		if (annotations == null || annotations.isEmpty()) {
+			ZLApplication application = view.Application;
+			application.getViewWidget().reset();
+			application.getViewWidget().repaint();
 			return;
 		}
 		for (DBookmark dBookmark : annotations) {
