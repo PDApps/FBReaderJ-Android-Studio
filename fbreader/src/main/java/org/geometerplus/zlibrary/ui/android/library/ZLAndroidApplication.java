@@ -61,4 +61,11 @@ public abstract class ZLAndroidApplication extends Application {
     public ArrayList<DBookmark> getAnnotations() {
         return new ArrayList<>();
     }
+
+    public void deselectAnnotation(){
+        ArrayList<DBookmark> bookmarks = getAnnotations();
+        for (DBookmark bookmark : bookmarks) {
+            bookmark.setSelected(false);
+        }
+    }
 }

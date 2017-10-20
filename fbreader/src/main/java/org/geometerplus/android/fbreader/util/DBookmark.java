@@ -13,6 +13,7 @@ import java.util.UUID;
 public class DBookmark implements Serializable {
     private UUID uuid;
     private FixedTextSnippet textSnippet;
+    private boolean selected;
 
     public DBookmark(TextSnippet textSnippet) {
         this.uuid = UUID.randomUUID();
@@ -35,5 +36,13 @@ public class DBookmark implements Serializable {
         } else {
             return false;
         }
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 }

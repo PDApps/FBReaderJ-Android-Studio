@@ -137,6 +137,7 @@ public final class FBReaderApp extends ZLApplication {
 		if (Model != null) {
 			if (Collection.sameBook(book, Model.Book)) {
 				onModelLoaded.run();
+				setBookmarkHighlightings(BookTextView);
 				return;
 			}
 		}
