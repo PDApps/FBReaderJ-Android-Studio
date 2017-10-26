@@ -1695,13 +1695,28 @@ public abstract class ZLTextView extends ZLTextViewBase {
 			return null;
 		}
 		synchronized (myHighlightings) {
+			ArrayList<ZLTextHighlighting> textHighlightings = new ArrayList<>();
 			for (ZLTextHighlighting h : myHighlightings) {
 				if (h.getBackgroundColor() != null && h.intersects(region)) {
-					return h;
+					textHighlightings.add(h);
 				}
 			}
+
+			int size = textHighlightings.size();
+			ZLTextHighlighting selectedHighlighting = null;
+			for (int i = 0; i < size; i++) {
+				ZLTextHighlighting highlighting = textHighlightings.get(i);
+				if (selectedHighlighting == null) {
+					selectedHighlighting = highlighting;
+				} else {
+					ZLTextPosition selectedStartPos = selectedHighlighting.getStartPosition();
+					if (selectedStartPos.compareTo(highlighting.getStartPosition()) < 0) {
+						selectedHighlighting = highlighting;
+					}
+				}
+			}
+			return selectedHighlighting;
 		}
-		return null;
 	}
 
 	protected ZLTextRegion findRegion(int x, int y, ZLTextRegion.Filter filter) {
