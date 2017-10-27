@@ -14,6 +14,7 @@ public class DBookmark implements Serializable {
     private UUID uuid;
     private FixedTextSnippet textSnippet;
     private boolean selected;
+    private int color;
 
     public DBookmark(TextSnippet textSnippet) {
         this.uuid = UUID.randomUUID();
@@ -44,5 +45,13 @@ public class DBookmark implements Serializable {
 
     public void setSelected(boolean selected) {
         this.selected = selected;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
     }
 }

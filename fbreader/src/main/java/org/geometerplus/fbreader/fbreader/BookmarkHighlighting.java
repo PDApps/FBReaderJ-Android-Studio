@@ -32,11 +32,12 @@ public final class BookmarkHighlighting extends ZLTextSimpleHighlighting {
 
     BookmarkHighlighting(ZLTextView view, DBookmark dBookmark) {
         super(view, dBookmark);
+        dBookmark.setColor(backgroundColor.intValue());
     }
 
     @Override
     public ZLColor getBackgroundColor() {
-        return backgroundColor;
+        return new ZLColor(getDBookmark().getColor());
     }
 
     @Override
