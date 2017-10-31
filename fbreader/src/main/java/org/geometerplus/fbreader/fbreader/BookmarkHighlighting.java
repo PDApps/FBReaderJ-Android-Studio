@@ -27,12 +27,10 @@ import org.geometerplus.zlibrary.text.view.ZLTextSimpleHighlighting;
 import org.geometerplus.zlibrary.text.view.ZLTextView;
 
 public final class BookmarkHighlighting extends ZLTextSimpleHighlighting {
-    private static ZLColor backgroundColor = new ZLColor(Color.DKGRAY);
     private static ZLColor outlineColor = new ZLColor(Color.BLACK);
 
     BookmarkHighlighting(ZLTextView view, DBookmark dBookmark) {
         super(view, dBookmark);
-        dBookmark.setColor(backgroundColor.intValue());
     }
 
     @Override

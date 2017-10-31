@@ -1,5 +1,7 @@
 package org.geometerplus.android.fbreader.util;
 
+import android.graphics.Color;
+
 import org.geometerplus.fbreader.util.FixedTextSnippet;
 import org.geometerplus.fbreader.util.TextSnippet;
 
@@ -19,6 +21,7 @@ public class DBookmark implements Serializable {
     public DBookmark(TextSnippet textSnippet) {
         this.uuid = UUID.randomUUID();
         this.textSnippet = (FixedTextSnippet) textSnippet;
+        color = Color.DKGRAY;
     }
 
     public TextSnippet getTextSnippet() {
