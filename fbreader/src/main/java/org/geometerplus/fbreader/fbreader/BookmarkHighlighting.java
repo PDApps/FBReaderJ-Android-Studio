@@ -27,8 +27,6 @@ import org.geometerplus.zlibrary.text.view.ZLTextSimpleHighlighting;
 import org.geometerplus.zlibrary.text.view.ZLTextView;
 
 public final class BookmarkHighlighting extends ZLTextSimpleHighlighting {
-    private static ZLColor outlineColor = new ZLColor(Color.BLACK);
-
     BookmarkHighlighting(ZLTextView view, DBookmark dBookmark) {
         super(view, dBookmark);
     }
@@ -45,10 +43,21 @@ public final class BookmarkHighlighting extends ZLTextSimpleHighlighting {
 
     @Override
     public ZLColor getOutlineColor() {
-        if(getDBookmark().isSelected()) {
-            return outlineColor;
-        }else {
+        if (getDBookmark().isSelected()) {
+            int color = getDBookmark().getColor();
+            color = manipulateColor(color, 0.9f);
+            return new ZLColor(color);
+        } else {
             return null;
         }
+    }
+
+    private static int manipulateColor(int color, float factor) {
+        int r = Math.round(Color.red(color) * factor);
+        int g = Math.round(Color.green(color) * factor);
+        int b = Math.round(Color.blue(color) * factor);
+        return Color.rgb(Math.min(r, 255),
+                Math.min(g, 255),
+                Math.min(b, 255));
     }
 }
