@@ -234,9 +234,6 @@ public class BookCollection extends AbstractBookCollection<DbBook> {
 					case Everything:
 						fireBookEvent(BookEvent.Updated, existing);
 						return true;
-					case Progress:
-						fireBookEvent(BookEvent.ProgressUpdated, existing);
-						return true;
 				}
 			}
 			return false;
