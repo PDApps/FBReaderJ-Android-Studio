@@ -584,7 +584,7 @@ public final class FBReaderApp extends ZLApplication {
 	}
 
 	public int getProgress() {
-		final ZLTextPosition position = new ZLTextFixedPosition(BookTextView.getStartCursor());
+		final ZLTextPosition position = new ZLTextFixedPosition(BookTextView.getEndCursor());
 		return position.getParagraphIndex();
 	}
 }
