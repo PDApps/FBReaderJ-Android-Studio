@@ -36,10 +36,10 @@ import org.geometerplus.fbreader.fbreader.FBReaderApp;
 import org.geometerplus.android.fbreader.httpd.DataUtil;
 import org.geometerplus.android.util.UIMessageUtil;
 
-class OpenVideoAction extends FBAndroidAction {
+public class OpenVideoAction extends FBAndroidAction {
     private FBReaderAdapter fbReaderAdapter;
 
-    OpenVideoAction(Activity baseActivity, FBReaderApp fbreader, FBReaderAdapter readerAdapter) {
+    public OpenVideoAction(Activity baseActivity, FBReaderApp fbreader, FBReaderAdapter readerAdapter) {
         super(baseActivity, fbreader);
         this.fbReaderAdapter = readerAdapter;
     }

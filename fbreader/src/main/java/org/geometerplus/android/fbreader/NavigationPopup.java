@@ -41,8 +41,8 @@ import org.geometerplus.zlibrary.ui.android.R;
 import org.geometerplus.fbreader.bookmodel.TOCTree;
 import org.geometerplus.fbreader.fbreader.FBReaderApp;
 
-final class NavigationPopup extends ZLApplication.PopupPanel {
-	final static String ID = "NavigationPopup";
+public final class NavigationPopup extends ZLApplication.PopupPanel {
+	public final static String ID = "NavigationPopup";
 
 	private volatile NavigationWindow myWindow;
 	private volatile Activity myActivity;
@@ -51,7 +51,7 @@ final class NavigationPopup extends ZLApplication.PopupPanel {
 	private final FBReaderApp myFBReader;
 	private volatile boolean myIsInProgress;
 
-	NavigationPopup(FBReaderApp fbReader) {
+	public NavigationPopup(FBReaderApp fbReader) {
 		super(fbReader);
 		myFBReader = fbReader;
 	}

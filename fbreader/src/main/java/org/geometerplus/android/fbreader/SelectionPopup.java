@@ -28,10 +28,10 @@ import org.geometerplus.fbreader.fbreader.ActionCode;
 import org.geometerplus.fbreader.fbreader.FBReaderApp;
 import org.geometerplus.zlibrary.ui.android.R;
 
-class SelectionPopup extends PopupPanel implements View.OnClickListener {
-	final static String ID = "SelectionPopup";
+public class SelectionPopup extends PopupPanel implements View.OnClickListener {
+	public final static String ID = "SelectionPopup";
 
-	SelectionPopup(FBReaderApp fbReader) {
+	public SelectionPopup(FBReaderApp fbReader) {
 		super(fbReader);
 	}
 

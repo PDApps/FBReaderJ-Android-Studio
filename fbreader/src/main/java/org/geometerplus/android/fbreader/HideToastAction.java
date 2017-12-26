@@ -27,7 +27,7 @@ import org.geometerplus.fbreader.fbreader.FBReaderApp;
 public class HideToastAction extends FBAndroidAction {
     private FBReaderAdapter fbReaderAdapter;
 
-    HideToastAction(Activity baseActivity, FBReaderApp fbreader, FBReaderAdapter readerAdapter) {
+    public HideToastAction(Activity baseActivity, FBReaderApp fbreader, FBReaderAdapter readerAdapter) {
         super(baseActivity, fbreader);
         this.fbReaderAdapter = readerAdapter;
     }

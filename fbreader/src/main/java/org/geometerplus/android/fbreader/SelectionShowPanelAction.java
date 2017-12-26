@@ -24,8 +24,8 @@ import android.app.Activity;
 import org.geometerplus.fbreader.fbreader.FBReaderApp;
 import org.geometerplus.zlibrary.text.view.ZLTextView;
 
-class SelectionShowPanelAction extends FBAndroidAction {
-    SelectionShowPanelAction(Activity baseActivity, FBReaderApp fbreader) {
+public class SelectionShowPanelAction extends FBAndroidAction {
+    public SelectionShowPanelAction(Activity baseActivity, FBReaderApp fbreader) {
         super(baseActivity, fbreader);
     }
 

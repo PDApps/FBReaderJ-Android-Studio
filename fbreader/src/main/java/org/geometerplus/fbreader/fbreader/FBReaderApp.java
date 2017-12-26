@@ -44,16 +44,6 @@ import org.geometerplus.fbreader.util.*;
 import org.geometerplus.zlibrary.ui.android.library.ZLAndroidApplication;
 
 public final class FBReaderApp extends ZLApplication {
-	public interface ExternalFileOpener {
-		public void openFile(ExternalFormatPlugin plugin, Book book, Bookmark bookmark);
-	}
-
-	private ExternalFileOpener myExternalFileOpener;
-
-	public void setExternalFileOpener(ExternalFileOpener o) {
-		myExternalFileOpener = o;
-	}
-
 	public final MiscOptions MiscOptions = new MiscOptions();
 	public final ImageOptions ImageOptions = new ImageOptions();
 	public final ViewOptions ViewOptions = new ViewOptions();

@@ -23,10 +23,10 @@ import android.app.Activity;
 
 import org.geometerplus.fbreader.fbreader.FBReaderApp;
 
-class SwitchProfileAction extends FBAndroidAction {
+public class SwitchProfileAction extends FBAndroidAction {
 	private String myProfileName;
 
-	SwitchProfileAction(Activity baseActivity, FBReaderApp fbreader, String profileName) {
+	public SwitchProfileAction(Activity baseActivity, FBReaderApp fbreader, String profileName) {
 		super(baseActivity, fbreader);
 		myProfileName = profileName;
 	}

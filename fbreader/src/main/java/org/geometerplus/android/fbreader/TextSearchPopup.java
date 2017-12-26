@@ -29,10 +29,10 @@ import org.geometerplus.zlibrary.core.resources.ZLResource;
 import org.geometerplus.fbreader.fbreader.ActionCode;
 import org.geometerplus.fbreader.fbreader.FBReaderApp;
 
-final class TextSearchPopup extends PopupPanel implements View.OnClickListener {
-	final static String ID = "TextSearchPopup";
+public final class TextSearchPopup extends PopupPanel implements View.OnClickListener {
+	public final static String ID = "TextSearchPopup";
 
-	TextSearchPopup(FBReaderApp fbReader) {
+	public TextSearchPopup(FBReaderApp fbReader) {
 		super(fbReader);
 	}
 
