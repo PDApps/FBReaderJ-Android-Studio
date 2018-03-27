@@ -25,10 +25,6 @@ import android.os.Parcelable;
 import android.view.View;
 import android.widget.Toast;
 
-import com.github.johnpersano.supertoasts.library.Style;
-import com.github.johnpersano.supertoasts.library.SuperActivityToast;
-import com.github.johnpersano.supertoasts.library.SuperToast;
-
 import org.geometerplus.android.fbreader.image.ImageViewActivity;
 import org.geometerplus.android.fbreader.util.FBReaderAdapter;
 import org.geometerplus.android.util.OrientationUtil;
@@ -79,55 +75,6 @@ public class ProcessHyperlinkAction extends FBAndroidAction {
 					}
 
 					Reader.Collection.markHyperlinkAsVisited(Reader.getCurrentBook(), hyperlink.Id);
-					final boolean showToast;
-					switch (Reader.MiscOptions.ShowFootnoteToast.getValue()) {
-						default:
-						case never:
-							showToast = false;
-							break;
-						case footnotesOnly:
-							showToast = hyperlink.Type == FBHyperlinkType.FOOTNOTE;
-							break;
-						case footnotesAndSuperscripts:
-							showToast =
-								hyperlink.Type == FBHyperlinkType.FOOTNOTE ||
-								region.isVerticallyAligned();
-							break;
-						case allInternalLinks:
-							showToast = true;
-							break;
-					}
-					if (showToast) {
-						final SuperActivityToast toast;
-						if (snippet.IsEndOfText) {
-							toast = new SuperActivityToast(BaseActivity, Style.TYPE_STANDARD);
-						} else {
-							toast = new SuperActivityToast(BaseActivity, Style.TYPE_BUTTON);
-							toast.setButtonIconResource(android.R.drawable.ic_menu_more);
-							toast.setButtonText(ZLResource.resource("toast").getResource("more").getValue());
-							toast.setOnButtonClickListener("ftnt", null, new SuperActivityToast.OnButtonClickListener() {
-								@Override
-								public void onClick(View view, Parcelable token) {
-									Reader.getTextView().hideOutline();
-									Reader.tryOpenFootnote(hyperlink.Id);
-								}
-							});
-						}
-						toast.setText(snippet.getText());
-						toast.setDuration(Reader.MiscOptions.FootnoteToastDuration.getValue().Value);
-						toast.setOnDismissListener("ftnt", new SuperToast.OnDismissListener() {
-							@Override
-							public void onDismiss(View view, Parcelable token) {
-								Reader.getTextView().hideOutline();
-								Reader.getViewWidget().repaint();
-							}
-						});
-						Reader.getTextView().outlineRegion(region);
-						fbReaderAdapter.showToast(toast);
-					} else {
-						Reader.tryOpenFootnote(hyperlink.Id);
-					}
-					break;
 				}
 			}
 		} else if (soul instanceof ZLTextImageRegionSoul) {
