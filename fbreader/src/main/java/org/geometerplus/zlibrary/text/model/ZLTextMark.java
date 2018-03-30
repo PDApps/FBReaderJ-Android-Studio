@@ -37,8 +37,11 @@ public class ZLTextMark implements Comparable<ZLTextMark> {
 	}
 
 	public int compareTo(ZLTextMark mark) {
-		final int diff = ParagraphIndex - mark.ParagraphIndex;
-		return diff != 0 ? diff : Offset - mark.Offset;
+		int diff = ParagraphIndex - mark.ParagraphIndex;
+		if (diff == 0) {
+			diff = Offset - mark.Offset;
+		}
+		return diff != 0 ? diff : Length - mark.Length;
 	}
 
 	public String toString() {
