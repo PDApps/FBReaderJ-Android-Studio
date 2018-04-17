@@ -112,30 +112,6 @@ public class PreferenceActivity extends ZLPreferenceActivity {
 		final PreferenceSet fontReloader = new PreferenceSet.Reloader();
 
 		final Screen appearanceScreen = createPreferenceScreen("appearance");
-		appearanceScreen.addPreference(new LanguagePreference(
-			this, appearanceScreen.Resource.getResource("language"), ZLResource.interfaceLanguages()
-		) {
-			@Override
-			protected void init() {
-				setInitialValue(ZLResource.getLanguageOption().getValue());
-			}
-
-			@Override
-			protected void setLanguage(String code) {
-				final ZLStringOption languageOption = ZLResource.getLanguageOption();
-				if (!code.equals(languageOption.getValue())) {
-					languageOption.setValue(code);
-					finish();
-					startActivity(new Intent(
-						Intent.ACTION_VIEW, Uri.parse("fbreader-action:preferences#appearance")
-					));
-				}
-			}
-		});
-		appearanceScreen.addPreference(new ZLStringChoicePreference(
-			this, appearanceScreen.Resource.getResource("screenOrientation"),
-			androidLibrary.getOrientationOption(), androidLibrary.allOrientations()
-		));
 		appearanceScreen.addPreference(new ZLBooleanPreference(
 			this,
 			viewOptions.TwoColumnView,
@@ -159,15 +135,6 @@ public class PreferenceActivity extends ZLPreferenceActivity {
 			androidLibrary.BatteryLevelToTurnScreenOffOption,
 			appearanceScreen.Resource.getResource("dontTurnScreenOff")
 		));
-		/*
-		appearanceScreen.addPreference(new ZLBooleanPreference(
-			this,
-			androidLibrary.DontTurnScreenOffDuringChargingOption,
-			appearanceScreen.Resource.getResource("dontTurnScreenOffDuringCharging")
-		));
-		 */
-		appearanceScreen.addOption(androidLibrary.ShowStatusBarOption, "showStatusBar");
-		appearanceScreen.addOption(androidLibrary.DisableButtonLightsOption, "disableButtonLights");
 
 		if (DeviceType.Instance().isEInk()) {
 			final EInkOptions einkOptions = new EInkOptions();
@@ -312,22 +279,6 @@ public class PreferenceActivity extends ZLPreferenceActivity {
 			));
 		}
 
-		final Screen toastsScreen = createPreferenceScreen("toast");
-		toastsScreen.addOption(miscOptions.ToastFontSizePercent, "fontSizePercent");
-		toastsScreen.addOption(miscOptions.ShowFootnoteToast, "showFootnoteToast");
-		toastsScreen.addPreference(new ZLEnumPreference(
-			this,
-			miscOptions.FootnoteToastDuration,
-			toastsScreen.Resource.getResource("footnoteToastDuration"),
-			ZLResource.resource("duration")
-		));
-
-		final Screen cssScreen = createPreferenceScreen("css");
-		cssScreen.addOption(baseStyle.UseCSSFontFamilyOption, "fontFamily");
-		cssScreen.addOption(baseStyle.UseCSSFontSizeOption, "fontSize");
-		cssScreen.addOption(baseStyle.UseCSSTextAlignmentOption, "textAlignment");
-		cssScreen.addOption(baseStyle.UseCSSMarginsOption, "margins");
-
 		final Screen colorsScreen = createPreferenceScreen("colors");
 
 		final PreferenceSet backgroundSet = new PreferenceSet.Enabler() {
@@ -371,167 +322,8 @@ public class PreferenceActivity extends ZLPreferenceActivity {
 		marginsScreen.addOption(viewOptions.BottomMargin, "bottom");
 		marginsScreen.addOption(viewOptions.SpaceBetweenColumns, "spaceBetweenColumns");
 
-		final Screen statusLineScreen = createPreferenceScreen("scrollBar");
-
-		final PreferenceSet footerPreferences = new PreferenceSet.Enabler() {
-			@Override
-			protected Boolean detectState() {
-				switch (viewOptions.ScrollbarType.getValue()) {
-					case FBView.SCROLLBAR_SHOW_AS_FOOTER:
-					case FBView.SCROLLBAR_SHOW_AS_FOOTER_OLD_STYLE:
-						return true;
-					default:
-						return false;
-				}
-			}
-		};
-		final PreferenceSet tocPreferences = new PreferenceSet.Enabler() {
-			@Override
-			protected Boolean detectState() {
-				switch (viewOptions.ScrollbarType.getValue()) {
-					case FBView.SCROLLBAR_SHOW_AS_FOOTER:
-					case FBView.SCROLLBAR_SHOW_AS_FOOTER_OLD_STYLE:
-						return footerOptions.ShowTOCMarks.getValue();
-					default:
-						return false;
-				}
-			}
-		};
-		final PreferenceSet oldStyleFooterPreferences = new PreferenceSet.Enabler() {
-			@Override
-			protected Boolean detectState() {
-				switch (viewOptions.ScrollbarType.getValue()) {
-					case FBView.SCROLLBAR_SHOW_AS_FOOTER_OLD_STYLE:
-						return true;
-					default:
-						return false;
-				}
-			}
-		};
-		final PreferenceSet newStyleFooterPreferences = new PreferenceSet.Enabler() {
-			@Override
-			protected Boolean detectState() {
-				switch (viewOptions.ScrollbarType.getValue()) {
-					case FBView.SCROLLBAR_SHOW_AS_FOOTER:
-						return true;
-					default:
-						return false;
-				}
-			}
-		};
-
-
-		final String[] scrollBarTypes = {"hide", "show", "showAsProgress", "showAsFooter", "showAsFooterOldStyle"};
-		statusLineScreen.addPreference(new ZLChoicePreference(
-			this, statusLineScreen.Resource.getResource("scrollbarType"),
-			viewOptions.ScrollbarType, scrollBarTypes
-		) {
-			@Override
-			protected void onDialogClosed(boolean result) {
-				super.onDialogClosed(result);
-				footerPreferences.run();
-				tocPreferences.run();
-				oldStyleFooterPreferences.run();
-				newStyleFooterPreferences.run();
-			}
-		});
-
-		footerPreferences.add(statusLineScreen.addPreference(new ZLIntegerRangePreference(
-			this, statusLineScreen.Resource.getResource("footerHeight"),
-			viewOptions.FooterHeight
-		)));
-		oldStyleFooterPreferences.add(statusLineScreen.addOption(profile.FooterFillOption, "footerOldStyleColor"));
-		newStyleFooterPreferences.add(statusLineScreen.addOption(profile.FooterNGBackgroundOption, "footerBackgroundColor"));
-		newStyleFooterPreferences.add(statusLineScreen.addOption(profile.FooterNGForegroundOption, "footerForegroundColor"));
-		newStyleFooterPreferences.add(statusLineScreen.addOption(profile.FooterNGForegroundUnreadOption, "footerForegroundUnreadColor"));
-		footerPreferences.add(statusLineScreen.addPreference(new ZLBooleanPreference(
-			PreferenceActivity.this,
-			footerOptions.ShowTOCMarks,
-			statusLineScreen.Resource.getResource("tocMarks")
-		) {
-			@Override
-			protected void onClick() {
-				super.onClick();
-				tocPreferences.run();
-			}
-		}));
-		tocPreferences.add(statusLineScreen.addOption(footerOptions.MaxTOCMarks, "tocMarksMaxNumber"));
-		footerPreferences.add(statusLineScreen.addOption(footerOptions.ShowProgress, "showProgress"));
-		footerPreferences.add(statusLineScreen.addOption(footerOptions.ShowClock, "showClock"));
-		footerPreferences.add(statusLineScreen.addOption(footerOptions.ShowBattery, "showBattery"));
-		footerPreferences.add(statusLineScreen.addPreference(new FontPreference(
-			this, statusLineScreen.Resource.getResource("font"),
-			footerOptions.Font, false
-		)));
-		footerPreferences.run();
-		tocPreferences.run();
-		oldStyleFooterPreferences.run();
-		newStyleFooterPreferences.run();
-
-		/*
-		final Screen colorProfileScreen = createPreferenceScreen("colorProfile");
-		final ZLResource resource = colorProfileScreen.Resource;
-		colorProfileScreen.setSummary(ColorProfilePreference.createTitle(resource, fbreader.getColorProfileName()));
-		for (String key : ColorProfile.names()) {
-			colorProfileScreen.addPreference(new ColorProfilePreference(
-				this, fbreader, colorProfileScreen, key, ColorProfilePreference.createTitle(resource, key)
-			));
-		}
-		 */
-
 		final Screen scrollingScreen = createPreferenceScreen("scrolling");
 		scrollingScreen.addOption(pageTurningOptions.FingerScrolling, "fingerScrolling");
-		scrollingScreen.addOption(miscOptions.EnableDoubleTap, "enableDoubleTapDetection");
-
-		final PreferenceSet volumeKeysPreferences = new PreferenceSet.Enabler() {
-			@Override
-			protected Boolean detectState() {
-				return keyBindings.hasBinding(KeyEvent.KEYCODE_VOLUME_UP, false);
-			}
-		};
-		scrollingScreen.addPreference(new ZLCheckBoxPreference(
-			this, scrollingScreen.Resource.getResource("volumeKeys")
-		) {
-			{
-				setChecked(keyBindings.hasBinding(KeyEvent.KEYCODE_VOLUME_UP, false));
-			}
-
-			@Override
-			protected void onClick() {
-				super.onClick();
-				if (isChecked()) {
-					keyBindings.bindKey(KeyEvent.KEYCODE_VOLUME_DOWN, false, ActionCode.VOLUME_KEY_SCROLL_FORWARD);
-					keyBindings.bindKey(KeyEvent.KEYCODE_VOLUME_UP, false, ActionCode.VOLUME_KEY_SCROLL_BACK);
-				} else {
-					keyBindings.bindKey(KeyEvent.KEYCODE_VOLUME_DOWN, false, FBReaderApp.NoAction);
-					keyBindings.bindKey(KeyEvent.KEYCODE_VOLUME_UP, false, FBReaderApp.NoAction);
-				}
-				volumeKeysPreferences.run();
-			}
-		});
-		volumeKeysPreferences.add(scrollingScreen.addPreference(new ZLCheckBoxPreference(
-			this, scrollingScreen.Resource.getResource("invertVolumeKeys")
-		) {
-			{
-				setChecked(ActionCode.VOLUME_KEY_SCROLL_FORWARD.equals(
-					keyBindings.getBinding(KeyEvent.KEYCODE_VOLUME_UP, false)
-				));
-			}
-
-			@Override
-			protected void onClick() {
-				super.onClick();
-				if (isChecked()) {
-					keyBindings.bindKey(KeyEvent.KEYCODE_VOLUME_DOWN, false, ActionCode.VOLUME_KEY_SCROLL_BACK);
-					keyBindings.bindKey(KeyEvent.KEYCODE_VOLUME_UP, false, ActionCode.VOLUME_KEY_SCROLL_FORWARD);
-				} else {
-					keyBindings.bindKey(KeyEvent.KEYCODE_VOLUME_DOWN, false, ActionCode.VOLUME_KEY_SCROLL_FORWARD);
-					keyBindings.bindKey(KeyEvent.KEYCODE_VOLUME_UP, false, ActionCode.VOLUME_KEY_SCROLL_BACK);
-				}
-			}
-		}));
-		volumeKeysPreferences.run();
-
 		scrollingScreen.addOption(pageTurningOptions.Animation, "animation");
 		scrollingScreen.addPreference(new AnimationSpeedPreference(
 			this,
@@ -540,43 +332,5 @@ public class PreferenceActivity extends ZLPreferenceActivity {
 			pageTurningOptions.AnimationSpeed
 		));
 		scrollingScreen.addOption(pageTurningOptions.Horizontal, "horizontal");
-
-		final Screen dictionaryScreen = createPreferenceScreen("dictionary");
-
-		final List<String> langCodes = ZLResource.languageCodes();
-		final ArrayList<Language> languages = new ArrayList<Language>(langCodes.size() + 1);
-		for (String code : langCodes) {
-			languages.add(new Language(code));
-		}
-		Collections.sort(languages);
-		languages.add(0, new Language(
-			Language.ANY_CODE, dictionaryScreen.Resource.getResource("targetLanguage")
-		));
-
-		final Screen imagesScreen = createPreferenceScreen("images");
-		imagesScreen.addOption(imageOptions.TapAction, "longTapAction");
-		imagesScreen.addOption(imageOptions.FitToScreen, "fitImagesToScreen");
-		imagesScreen.addOption(imageOptions.ImageViewBackground, "backgroundColor");
-		imagesScreen.addOption(imageOptions.MatchBackground, "matchBackground");
-
-		final CancelMenuHelper cancelMenuHelper = new CancelMenuHelper();
-		final Screen cancelMenuScreen = createPreferenceScreen("cancelMenu");
-		cancelMenuScreen.addOption(cancelMenuHelper.ShowLibraryItemOption, "library");
-		cancelMenuScreen.addOption(cancelMenuHelper.ShowNetworkLibraryItemOption, "networkLibrary");
-		cancelMenuScreen.addOption(cancelMenuHelper.ShowPreviousBookItemOption, "previousBook");
-		cancelMenuScreen.addOption(cancelMenuHelper.ShowPositionItemsOption, "positions");
-
-		final Screen aboutScreen = createPreferenceScreen("about");
-		aboutScreen.addPreference(new InfoPreference(
-			this,
-			aboutScreen.Resource.getResource("version").getValue(),
-			androidLibrary.getFullVersionName()
-		));
-		aboutScreen.addPreference(new UrlPreference(this, aboutScreen.Resource, "site"));
-		aboutScreen.addPreference(new UrlPreference(this, aboutScreen.Resource, "email"));
-		aboutScreen.addPreference(new UrlPreference(this, aboutScreen.Resource, "googleplus"));
-		aboutScreen.addPreference(new UrlPreference(this, aboutScreen.Resource, "twitter"));
-		aboutScreen.addPreference(new UrlPreference(this, aboutScreen.Resource, "facebook"));
-		aboutScreen.addPreference(new ThirdPartyLibrariesPreference(this, aboutScreen.Resource, "thirdParty"));
 	}
 }
