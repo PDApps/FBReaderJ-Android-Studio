@@ -73,7 +73,6 @@ Compile By Tandong  2016.3.24
         <activity
             android:name="org.geometerplus.android.fbreader.preferences.PreferenceActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:process=":preferences"
             android:theme="@style/FBReader.Activity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
