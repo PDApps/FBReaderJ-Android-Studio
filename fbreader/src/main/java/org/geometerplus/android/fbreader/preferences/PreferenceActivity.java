@@ -279,42 +279,6 @@ public class PreferenceActivity extends ZLPreferenceActivity {
 			));
 		}
 
-		final Screen colorsScreen = createPreferenceScreen("colors");
-
-		final PreferenceSet backgroundSet = new PreferenceSet.Enabler() {
-			@Override
-			protected Boolean detectState() {
-				return profile.WallpaperOption.getValue().startsWith("/");
-			}
-		};
-		myBackgroundPreference = new BackgroundPreference(
-			this,
-			profile,
-			colorsScreen.Resource.getResource("background"),
-			BACKGROUND_REQUEST_CODE
-		) {
-			@Override
-			public void update(Intent data) {
-				super.update(data);
-				backgroundSet.run();
-			}
-		};
-		colorsScreen.addPreference(myBackgroundPreference);
-		backgroundSet.add(colorsScreen.addOption(profile.FillModeOption, "fillMode"));
-		backgroundSet.run();
-
-		colorsScreen.addOption(profile.RegularTextOption, "text");
-		colorsScreen.addOption(profile.HyperlinkTextOption, "hyperlink");
-		colorsScreen.addOption(profile.VisitedHyperlinkTextOption, "hyperlinkVisited");
-		colorsScreen.addOption(profile.FooterFillOption, "footerOldStyle");
-		colorsScreen.addOption(profile.FooterNGBackgroundOption, "footerBackground");
-		colorsScreen.addOption(profile.FooterNGForegroundOption, "footerForeground");
-		colorsScreen.addOption(profile.FooterNGForegroundUnreadOption, "footerForegroundUnread");
-		colorsScreen.addOption(profile.SelectionBackgroundOption, "selectionBackground");
-		colorsScreen.addOption(profile.SelectionForegroundOption, "selectionForeground");
-		colorsScreen.addOption(profile.HighlightingForegroundOption, "highlightingForeground");
-		colorsScreen.addOption(profile.HighlightingBackgroundOption, "highlightingBackground");
-
 		final Screen marginsScreen = createPreferenceScreen("margins");
 		marginsScreen.addOption(viewOptions.LeftMargin, "left");
 		marginsScreen.addOption(viewOptions.RightMargin, "right");
