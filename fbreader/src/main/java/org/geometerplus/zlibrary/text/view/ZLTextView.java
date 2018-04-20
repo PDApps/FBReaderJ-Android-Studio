@@ -183,7 +183,7 @@ public abstract class ZLTextView extends ZLTextViewBase {
 		if (myModel == null || text.length() == 0) {
 			return 0;
 		}
-		int startIndex = myCurrentPage.StartCursor.getParagraphIndex();
+		int startIndex = 0;
 		int endIndex = myModel.getParagraphsNumber();
 		if (thisSectionOnly) {
 			// TODO: implement
