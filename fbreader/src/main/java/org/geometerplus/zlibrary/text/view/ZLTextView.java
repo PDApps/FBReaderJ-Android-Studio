@@ -189,6 +189,9 @@ public abstract class ZLTextView extends ZLTextViewBase {
 			// TODO: implement
 		}
 		int count = myModel.search(text, startIndex, endIndex, ignoreCase);
+		if (myModel.isSearchCanceled()) {
+			return count;
+		}
 		myPreviousPage.reset();
 		myNextPage.reset();
 		if (!myCurrentPage.StartCursor.isNull()) {
@@ -203,6 +206,10 @@ public abstract class ZLTextView extends ZLTextViewBase {
 			Application.getViewWidget().repaint();
 		}
 		return count;
+	}
+
+	public void cancelSearch() {
+		myModel.cancelSearch();
 	}
 
 	public boolean canFindNext() {

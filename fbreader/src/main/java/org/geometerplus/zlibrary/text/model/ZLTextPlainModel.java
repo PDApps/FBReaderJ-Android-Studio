@@ -43,6 +43,7 @@ public final class ZLTextPlainModel implements ZLTextModel, ZLTextStyleEntry.Fea
 	private ArrayList<ZLTextMark> myMarks;
 
 	private final FontManager myFontManager;
+	private boolean mSearchCanceled;
 
 	final class EntryIteratorImpl implements ZLTextParagraph.EntryIterator {
 		private int myCounter;
@@ -374,7 +375,19 @@ public final class ZLTextPlainModel implements ZLTextModel, ZLTextStyleEntry.Fea
 		return mark;
 	}
 
+	@Override
+	public void cancelSearch() {
+		mSearchCanceled = true;
+	}
+
+	@Override
+	public boolean isSearchCanceled() {
+		return mSearchCanceled;
+	}
+
+	@Override
 	public final int search(final String text, int startIndex, int endIndex, boolean ignoreCase) {
+		mSearchCanceled = false;
 		int count = 0;
 		ZLSearchPattern pattern = new ZLSearchPattern(text, ignoreCase);
 		myMarks = new ArrayList<ZLTextMark>();
@@ -386,7 +399,7 @@ public final class ZLTextPlainModel implements ZLTextModel, ZLTextStyleEntry.Fea
 		}
 		int index = startIndex;
 		final EntryIteratorImpl it = new EntryIteratorImpl(index);
-		while (true) {
+		while (!mSearchCanceled) {
 			int offset = 0;
 			while (it.next()) {
 				if (it.getType() == ZLTextParagraph.Entry.TEXT) {
