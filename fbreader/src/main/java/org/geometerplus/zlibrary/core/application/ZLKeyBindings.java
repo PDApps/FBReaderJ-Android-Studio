@@ -65,8 +65,6 @@ public final class ZLKeyBindings {
 				keymapFilename = "keymap.xml";
 			}
 			new Reader(keys).readQuietly("default/" + keymapFilename);
-			new Reader(keys).readQuietly(Paths.systemShareDirectory() + "/keymap.xml");
-			new Reader(keys).readQuietly(Paths.bookPath().get(0) + "/keymap.xml");
 			myKeysOption = new ZLStringListOption(myName, "KeyList", new ArrayList<String>(keys), ",");
 		}
 	}
