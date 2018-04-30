@@ -355,6 +355,24 @@ public final class FBReaderApp extends ZLApplication {
 		return bookmarks;
 	}
 
+	/**
+	 * Jump back if footnote on the screen
+	 *
+	 * @return true if jump from footnote, false otherwise
+	 */
+	public boolean tryJumpBack() {
+		try {
+			if (getTextView() != BookTextView) {
+				showBookTextView();
+				return true;
+			}
+			return false;
+		} finally {
+			myJumpEndPosition = null;
+			myJumpTimeStamp = null;
+		}
+	}
+
 	public void showBookTextView() {
 		setView(BookTextView);
 	}
