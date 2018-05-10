@@ -236,6 +236,14 @@ public abstract class ZLTextView extends ZLTextViewBase {
 		}
 	}
 
+	public void findFirst() {
+		gotoMark(myModel.getFirstMark());
+	}
+
+	public void findLast() {
+		gotoMark(myModel.getLastMark());
+	}
+
 	public void clearFindResults() {
 		if (!findResultsAreEmpty()) {
 			myModel.removeAllMarks();
