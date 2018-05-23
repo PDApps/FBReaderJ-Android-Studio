@@ -27,6 +27,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.view.View;
+import android.view.WindowManager;
 
 import org.fbreader.util.Pair;
 
@@ -123,7 +125,11 @@ public abstract class UIUtil {
 			public void execute(final Runnable action, final Runnable uiPostAction) {
 				activity.runOnUiThread(new Runnable() {
 					public void run() {
-						myProgress = ProgressDialog.show(activity, null, myMessage, true, false);
+						myProgress = new ImmersiveProgressDialog(activity);
+						myProgress.setMessage(myMessage);
+						myProgress.setIndeterminate(true);
+						myProgress.setCancelable(false);
+						myProgress.show();
 						final Thread runner = new Thread() {
 							public void run() {
 								action.run();
