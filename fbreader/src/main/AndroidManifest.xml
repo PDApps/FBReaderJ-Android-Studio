@@ -33,7 +33,8 @@ Compile By Tandong  2016.3.24
         <activity
             android:name="org.geometerplus.android.fbreader.bookmark.EditBookmarkActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:theme="@style/FBReader.Dialog">
+            android:theme="@style/FBReader.Dialog"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.fbreader.action.EDIT_BOOKMARK" />
 
@@ -43,7 +44,8 @@ Compile By Tandong  2016.3.24
         <activity
             android:name="org.geometerplus.android.fbreader.bookmark.EditStyleActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:theme="@style/FBReader.Dialog">
+            android:theme="@style/FBReader.Dialog"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.fbreader.action.EDIT_STYLES" />
 
@@ -58,6 +60,7 @@ Compile By Tandong  2016.3.24
         <activity
             android:name="org.geometerplus.android.fbreader.library.BookInfoActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="true"
             android:process=":library"
             android:theme="@style/FBReader.Activity">
             <intent-filter>
@@ -73,6 +76,7 @@ Compile By Tandong  2016.3.24
         <activity
             android:name="org.geometerplus.android.fbreader.preferences.PreferenceActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="true"
             android:theme="@style/FBReader.Activity.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
