@@ -22,6 +22,7 @@ package org.geometerplus.fbreader.fbreader;
 public interface ActionCode {
 	String SHOW_BOOK_INFO = "bookInfo";
 	String SHOW_TOC = "toc";
+	String TOGGLE_FULLSCREEN = "fullscreen";
 
 	String SWITCH_TO_NIGHT_PROFILE = "night";
 	String SWITCH_TO_DAY_PROFILE = "day";
