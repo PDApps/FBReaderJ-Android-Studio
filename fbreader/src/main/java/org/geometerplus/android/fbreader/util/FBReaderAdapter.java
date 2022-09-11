@@ -21,4 +21,5 @@ public interface FBReaderAdapter {
     DataService.Connection getDataConnection();
     boolean isToastShown();
     void hideToast();
+    void doHyperlink(int paragraphIndex);
 }

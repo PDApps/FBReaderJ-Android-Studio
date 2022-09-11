@@ -33,6 +33,7 @@ import org.geometerplus.android.fbreader.image.ImageViewActivity;
 import org.geometerplus.android.fbreader.util.FBReaderAdapter;
 import org.geometerplus.android.util.OrientationUtil;
 import org.geometerplus.fbreader.book.Book;
+import org.geometerplus.fbreader.bookmodel.BookModel;
 import org.geometerplus.fbreader.bookmodel.FBHyperlinkType;
 import org.geometerplus.fbreader.fbreader.FBReaderApp;
 import org.geometerplus.fbreader.util.AutoTextSnippet;
@@ -125,7 +126,8 @@ public class ProcessHyperlinkAction extends FBAndroidAction {
 						Reader.getTextView().outlineRegion(region);
 						fbReaderAdapter.showToast(toast);
 					} else {
-						Reader.tryOpenFootnote(hyperlink.Id);
+						final BookModel.Label label = Reader.Model.getLabel(hyperlink.Id);
+						fbReaderAdapter.doHyperlink(label.ParagraphIndex);
 					}
 					break;
 				}
