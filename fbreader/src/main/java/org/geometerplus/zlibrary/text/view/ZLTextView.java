@@ -634,7 +634,7 @@ public abstract class ZLTextView extends ZLTextViewBase {
 		setTextStyle(getTextStyleCollection().getBaseStyle());
 
 		final int textWidth = getTextColumnWidth();
-		final int textHeight = getTextAreaHeight();
+		final int textHeight = getFullscreenHeight();
 
 		final int num = myModel.getParagraphsNumber();
 		final int totalTextSize = myModel.getTextLength(num - 1);

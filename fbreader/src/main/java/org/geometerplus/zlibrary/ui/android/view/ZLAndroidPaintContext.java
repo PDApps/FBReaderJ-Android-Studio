@@ -333,6 +333,11 @@ public final class ZLAndroidPaintContext extends ZLPaintContext {
 	}
 
 	@Override
+	public int getScreenHeight() {
+		return myGeometry.ScreenSize.Height;
+	}
+
+	@Override
 	public int getStringWidth(char[] string, int offset, int length) {
 		boolean containsSoftHyphen = false;
 		for (int i = offset; i < offset + length; ++i) {

@@ -108,6 +108,7 @@ abstract public class ZLPaintContext {
 
 	abstract public int getWidth();
 	abstract public int getHeight();
+	abstract public int getScreenHeight();
 
 	public final int getStringWidth(String string) {
 		return getStringWidth(string.toCharArray(), 0, string.length());

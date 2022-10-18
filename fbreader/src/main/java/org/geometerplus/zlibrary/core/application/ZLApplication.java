@@ -48,6 +48,10 @@ public abstract class ZLApplication {
 		ourInstance = this;
 	}
 
+	public ZLApplicationWindow getMyWindow() {
+		return myWindow;
+	}
+
 	protected final void setView(ZLView view) {
 		if (view != null) {
 			myView = view;

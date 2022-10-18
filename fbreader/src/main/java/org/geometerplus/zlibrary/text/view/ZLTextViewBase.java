@@ -19,7 +19,13 @@
 
 package org.geometerplus.zlibrary.text.view;
 
+import android.content.res.Resources;
+import android.util.TypedValue;
+
+import androidx.fragment.app.Fragment;
+
 import org.geometerplus.zlibrary.core.application.ZLApplication;
+import org.geometerplus.zlibrary.core.application.ZLApplicationWindow;
 import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 import org.geometerplus.zlibrary.core.library.ZLibrary;
 import org.geometerplus.zlibrary.core.util.ZLColor;
@@ -108,6 +114,21 @@ abstract class ZLTextViewBase extends ZLView {
 
 	int getTextAreaHeight() {
 		return getContextHeight() - getTopMargin() - getBottomMargin();
+	}
+
+	int getFullscreenHeight() {
+		int footerHeight = 0;
+		ZLApplicationWindow window = Application.getMyWindow();
+		if (window instanceof Fragment) {
+			int footerHeightDp = 20;
+			Resources resources = ((Fragment) window).getResources();
+			footerHeight = (int) (TypedValue.applyDimension(
+					TypedValue.COMPLEX_UNIT_DIP,
+					footerHeightDp,
+					resources.getDisplayMetrics()
+			) + 0.5f);
+		}
+		return getScreenHeight() - getTopMargin() - footerHeight;
 	}
 
 	protected int getColumnIndex(int x) {
