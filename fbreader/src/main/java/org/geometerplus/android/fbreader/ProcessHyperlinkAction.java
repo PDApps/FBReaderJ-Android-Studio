@@ -21,7 +21,11 @@ package org.geometerplus.android.fbreader;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -42,6 +46,8 @@ import org.geometerplus.zlibrary.text.view.ZLTextHyperlink;
 import org.geometerplus.zlibrary.text.view.ZLTextHyperlinkRegionSoul;
 import org.geometerplus.zlibrary.text.view.ZLTextImageRegionSoul;
 import org.geometerplus.zlibrary.text.view.ZLTextRegion;
+
+import java.util.List;
 
 public class ProcessHyperlinkAction extends FBAndroidAction {
 	private FBReaderAdapter fbReaderAdapter;
@@ -154,8 +160,13 @@ public class ProcessHyperlinkAction extends FBAndroidAction {
 	}
 
 	private void openInBrowser(final String url) {
-		// TODO: make method abstract. Add realisation to open Dicti WebView
-		Toast.makeText(BaseActivity, "For developers: Add realisation to open Dicti WebView", Toast.LENGTH_SHORT).show();
-
+		Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+		PackageManager packageManager = BaseActivity.getPackageManager();
+		List<ResolveInfo> info = packageManager.queryIntentActivities(browserIntent, 0);
+		if (info.size() > 0) {
+			BaseActivity.startActivity(browserIntent);
+		} else {
+			Log.d("openInBrowser", "No Intent available to handle action");
+		}
 	}
 }

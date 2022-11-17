@@ -103,4 +103,11 @@ Compile By Tandong  2016.3.24
             android:theme="@style/FBReader.Dialog" />
     </application>
 
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="https" />
+        </intent>
+    </queries>
 </manifest>
