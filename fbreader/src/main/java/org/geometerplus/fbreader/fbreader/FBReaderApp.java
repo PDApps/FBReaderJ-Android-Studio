@@ -24,8 +24,6 @@ import android.os.Looper;
 
 import java.util.*;
 
-import org.fbreader.util.ComparisonUtil;
-
 import org.geometerplus.android.fbreader.util.DBookmark;
 import org.geometerplus.zlibrary.core.application.*;
 import org.geometerplus.zlibrary.core.drm.FileEncryptionInfo;
@@ -60,11 +58,13 @@ public final class FBReaderApp extends ZLApplication {
 
 	private ZLTextPosition myJumpEndPosition;
 	private Date myJumpTimeStamp;
+	private DictiAnnotationsCallback dictiAnnotationsCallback;
 
 	public final IBookCollection<Book> Collection;
 
-	public FBReaderApp(SystemInfo systemInfo, final IBookCollection<Book> collection) {
+	public FBReaderApp(SystemInfo systemInfo, final IBookCollection<Book> collection, DictiAnnotationsCallback fbReaderFragment) {
 		super(systemInfo);
+		this.dictiAnnotationsCallback = fbReaderFragment;
 
 		Collection = collection;
 
@@ -258,7 +258,7 @@ public final class FBReaderApp extends ZLApplication {
 	}
 
 	private void setBookmarkHighlightings(ZLTextView view) {
-		ArrayList<DBookmark> annotations = getAnnotations();
+		List<DBookmark> annotations = dictiAnnotationsCallback.getAnnotations();
 		view.removeHighlightings(BookmarkHighlighting.class);
 		if (annotations == null || annotations.isEmpty()) {
 			ZLApplication application = view.Application;
@@ -269,10 +269,6 @@ public final class FBReaderApp extends ZLApplication {
 		for (DBookmark dBookmark : annotations) {
 			view.addHighlighting(new BookmarkHighlighting(view, dBookmark));
 		}
-	}
-
-	private ArrayList<DBookmark> getAnnotations() {
-		return ZLAndroidApplication.getInstance().getAnnotations();
 	}
 
 	private void setFootnoteModel(String modelId) {

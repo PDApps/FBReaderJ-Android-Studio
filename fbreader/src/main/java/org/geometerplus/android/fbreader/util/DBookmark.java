@@ -13,7 +13,7 @@ import java.util.UUID;
  */
 
 public class DBookmark implements Serializable {
-    private UUID uuid;
+    public UUID uuid;
     private FixedTextSnippet textSnippet;
     private boolean selected;
     private int color;
